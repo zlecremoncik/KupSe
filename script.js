@@ -395,7 +395,7 @@ window.pokazSzczegoly = async (id) => {
     if (!o) return;
 
     // POPRAWKA SEO: Zmieniamy tytuł strony na nazwę ogłoszenia
-    document.title = `${o.tytul} - ${o.cena} zł | KupSe.pl`;
+    document.title = `${o.tytul} - ${o.cena} zł | KupSe24.pl`;
 
     // Dodajemy małe zabezpieczenie, żeby okno nie "mignęło" bez danych użytkownika
     let { data: { user } } = await baza.auth.getUser();
