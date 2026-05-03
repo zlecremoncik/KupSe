@@ -1,7 +1,15 @@
+// FUNKCJA BEZPIECZEŃSTWA: Czyści tekst z groźnych znaków < > itp.
+const bezpiecznyTekst = (t) => {
+    const div = document.createElement('div');
+    div.textContent = t;
+    return div.innerHTML;
+};
+
 window.renderujOgloszenia = (lista) => {
     const k = document.getElementById('lista');
     if (!k) return;
     k.style.display = 'grid';
+    // Mapujemy listę, używając bezpiecznego renderowania
     k.innerHTML = lista.map(o => renderCardHTML(o)).join('');
 };
 
@@ -323,9 +331,20 @@ window.otworzChat = async (zKim) => {
 
 window.wyslijZChatu = async (odbiorca) => {
     const { data: { user } } = await baza.auth.getUser();
-    const tresc = document.getElementById('chat-input').value.trim();
-    if (!tresc) return;
-    await baza.from('wiadomosci').insert([{ nadawca: user.email, odbiorca, tresc, przeczytane: false }]);
+    const surowaTresc = document.getElementById('chat-input').value.trim();
+    if (!surowaTresc) return;
+
+    // BEZPIECZEŃSTWO: Czyścimy treść wiadomości przed wysłaniem do bazy
+    const czystaTresc = bezpiecznyTekst(surowaTresc);
+
+    await baza.from('wiadomosci').insert([{ 
+        nadawca: user.email, 
+        odbiorca, 
+        tresc: czystaTresc, 
+        przeczytane: false 
+    }]);
+    
+    document.getElementById('chat-input').value = ''; // Czyścimy pole po wysłaniu
     window.otworzChat(odbiorca);
 };
 
@@ -374,6 +393,9 @@ async function init() {
 window.pokazSzczegoly = async (id) => {
     const o = daneOgloszen.find(x => x.id === id);
     if (!o) return;
+
+    // POPRAWKA SEO: Zmieniamy tytuł strony na nazwę ogłoszenia
+    document.title = `${o.tytul} - ${o.cena} zł | KupSe.pl`;
 
     // Dodajemy małe zabezpieczenie, żeby okno nie "mignęło" bez danych użytkownika
     let { data: { user } } = await baza.auth.getUser();
@@ -898,6 +920,9 @@ window.zamknijModal = () => {
     // 1. Ukrywamy wszystkie okna
     document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
     
+    // POPRAWKA SEO: Przywracamy główny tytuł strony
+    document.title = "KupSe - Twój Portal Ogłoszeniowy";
+
     // 2. Przywracamy przewijanie strony głównej
     document.body.style.overflow = 'auto';
     
