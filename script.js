@@ -1,3 +1,13 @@
+// Ta funkcja zamienia "Suzuki Grand Vitara!" na "suzuki-grand-vitara"
+const zrobLadnyTytul = (t) => {
+    return t.toLowerCase()
+        .replace(/[ąàáâãäå]/g, 'a').replace(/[ć]/g, 'c').replace(/[ęèéêë]/g, 'e')
+        .replace(/[ł]/g, 'l').replace(/[ń]/g, 'n').replace(/[óòôõö]/g, 'o')
+        .replace(/[ś]/g, 's').replace(/[źż]/g, 'z')
+        .replace(/[^a-z0-9 ]/g, '') // usuwa znaki specjalne
+        .replace(/\s+/g, '-')       // zamienia spacje na minusy
+        .trim();
+};
 // FUNKCJA BEZPIECZEŃSTWA: Czyści tekst z groźnych znaków < > itp.
 const bezpiecznyTekst = (t) => {
     const div = document.createElement('div');
@@ -394,10 +404,12 @@ window.pokazSzczegoly = async (id) => {
     const o = daneOgloszen.find(x => x.id === id);
     if (!o) return;
 
-    // --- NOWOŚĆ: Zmiana adresu URL w przeglądarce ---
+    // --- NOWOŚĆ: Budujemy ładny link ---
+    const ladnyTytul = zrobLadnyTytul(o.tytul);
     const nowyURL = new URL(window.location);
-    nowyURL.searchParams.set('id', id);
-    window.history.pushState({id: id}, '', nowyURL);
+    // Adres będzie wyglądał tak: ?ogloszenie=nissan-qashqai-123
+    nowyURL.searchParams.set('ogloszenie', `${ladnyTytul}-${o.id}`);
+    window.history.pushState({id: o.id}, '', nowyURL);
 
     document.title = `${o.tytul} - ${o.cena} zł | KupSe24.pl`;
 
@@ -963,10 +975,14 @@ async function init() {
         await sprawdzUzytkownika();
 
         // 3. Dopiero gdy wiemy kim jest użytkownik, sprawdzamy czy w linku jest ID ogłoszenia
-        const parametry = new URLSearchParams(window.location.search);
-        const idZLinku = parametry.get('id');
-        if (idZLinku) {
-            window.pokazSzczegoly(Number(idZLinku));
+                const parametry = new URLSearchParams(window.location.search);
+        const ogloszenieZLinku = parametry.get('ogloszenie'); // np. "suzuki-123"
+        
+        if (ogloszenieZLinku) {
+            // Wyciągamy samą końcówkę (ID), czyli to co po ostatnim minusie
+            const czesci = ogloszenieZLinku.split('-');
+            const realneID = czesci[czesci.length - 1];
+            window.pokazSzczegoly(Number(realneID));
         }
         
         // 4. Uruchamiamy powiadomienia na żywo
