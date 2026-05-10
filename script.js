@@ -441,9 +441,17 @@ window.pokazSzczegoly = async (id) => {
         : "";
 
     document.getElementById('view-content').innerHTML = `
-        <button class="close-btn" onclick="window.zamknijModal()">&times;</button>
-        ${btnWstecz}
-        <div style="display:flex; flex-direction: column; gap:15px; margin-top: 25px;">
+        <!-- NOWOCZESNY PASEK GÓRNY (ROZDZIELA PRZYCISKI) -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0;">
+            <div>
+                ${btnWstecz}
+            </div>
+            <button class="close-btn" onclick="window.zamknijModal()" style="position:static; background:#f5f5f5; border:none; width:35px; height:35px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:22px; color:#333; transition: 0.3s;">
+                &times;
+            </button>
+        </div>
+
+        <div style="display:flex; flex-direction: column; gap:15px;">
             <div style="width:100%;">
                 <div style="background:#000; border-radius:15px; height:280px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
                     <img id="mainFoto" src="${window.aktualneFotki[0]}" style="max-width:100%; max-height:100%; object-fit: contain;" onclick="window.otworzFullFoto()">
