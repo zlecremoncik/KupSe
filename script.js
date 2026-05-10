@@ -72,7 +72,6 @@ const formatujDate = (d) => {
 
 let daneOgloszen = [];
 let mojeUlubione = [];
-window.obecneOgloszenieId = null; // To jest nasza nowa "pamięć"
 let aktualneZdjecieIndex = 0;
 let aktualneFotki = [];
 let wynikiBazowe = [];
@@ -271,7 +270,7 @@ window.pokazSkrzynke = async () => {
     const mb = document.querySelector('.modal-box');
     if(mb) mb.style.maxWidth = "450px"; 
 
-    let html = `<button class="close-btn" onclick="window.wrocDoOgloszeniaLubZamknij()">&times;</button>
+    let html = `<button class="close-btn" onclick="window.zamknijModal()">&times;</button>
                 <h2 style="text-align:center; margin-bottom:20px;">Wiadomości</h2>
                 <div style="display:flex; flex-direction:column; gap:8px;">`;
 
@@ -311,7 +310,7 @@ window.otworzChat = async (zKim) => {
                 <button onclick="window.pokazSkrzynke()" style="background:none; border:none; font-size:20px; cursor:pointer;">←</button>
                 <h4 style="margin:0;">${dajNazwe(zKim)}</h4>
             </div>
-            <button class="close-btn" onclick="window.wrocDoOgloszeniaLubZamknij()" style="position:static; font-size:25px;">&times;</button>
+            <button class="close-btn" onclick="window.zamknijModal()" style="position:static; font-size:25px;">&times;</button>
         </div>
         <div id="chat-window" style="height:350px; overflow-y:auto; background:#ffffff; padding:10px; border:1px solid #eee; border-radius:12px; display:flex; flex-direction:column; gap:8px;">
             ${msg.map(m => {
@@ -360,6 +359,13 @@ window.wyslijZChatu = async (odbiorca) => {
 };
 
 // --- FUNKCJE SYSTEMOWE ---
+window.zamknijModal = () => {
+    const mb = document.querySelector('.modal-box');
+    if(mb) mb.style.maxWidth = "1250px"; 
+    document.getElementById('modal-view').style.display = 'none';
+    // Ta linia poniżej naprawia problem ze znikającym suwakiem:
+    document.body.style.overflow = 'auto'; 
+};
 window.toggleUserMenu = (e) => { 
     e.stopPropagation(); 
     const m = document.getElementById('drop-menu'); 
@@ -397,8 +403,6 @@ async function init() {
 window.pokazSzczegoly = async (id) => {
     const o = daneOgloszen.find(x => x.id === id);
     if (!o) return;
-
-    window.obecneOgloszenieId = id; // Zapamiętujemy ID przy otwieraniu
 
     // --- NOWOŚĆ: Budujemy ładny link ---
     const ladnyTytul = zrobLadnyTytul(o.tytul);
@@ -917,57 +921,28 @@ window.pokazUlubione = () => {
     const ulubioneLista = daneOgloszen.filter(o => mojeUlubione.includes(o.id));
     window.pokazWynikiModal("Twoje Ulubione", ulubioneLista);
 };
-window.wrocDoOgloszeniaLubZamknij = () => {
-    if (window.obecneOgloszenieId) {
-        // Jeśli mamy zapamiętane ID, to wracamy do ogłoszenia
-        window.pokazSzczegoly(window.obecneOgloszenieId);
-    } else {
-        // Jeśli nie (np. otworzyłeś wiadomości prosto z menu), to zamykamy wszystko
-        window.zamknijModal();
-    }
-};
+
 window.zamknijModal = () => {
-    // 1. Zamykamy wszystkie okna
+    // 1. Ukrywamy wszystkie okna
     document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
     
-    // 2. Przywracamy tytuł strony
+    // 2. Przywracamy domyślny tytuł
     document.title = "KupSe24 - Twój Portal Ogłoszeniowy";
 
-    // 3. Przywracamy suwak strony
+    // 3. Przywracamy przewijanie strony
     document.body.style.overflow = 'auto';
     
-    // 4. Czyścimy adres URL (usuwamy ?ogloszenie=...)
-    const czystyURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+    // --- NOWOŚĆ: Czyścimy adres URL (usuwamy ?id=...) ---
+    const czystyURL = window.location.pathname;
     window.history.pushState({}, '', czystyURL);
 
-    // 5. Czyścimy pamięć ogłoszenia
-    window.obecneOgloszenieId = null; 
-
-    // 6. Resetujemy szerokość okna
+    // 4. Resetujemy wygląd
     const mb = document.querySelector('.modal-box');
     if(mb) mb.style.maxWidth = "1250px";
     
     window.czyOkienkoOtwarte = false;
 };
-    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-    
-    // 2. Przywracamy domyślny tytuł strony
-    document.title = "KupSe24 - Twój Portal Ogłoszeniowy";
 
-    // 3. Przywracamy przewijanie strony głównej
-    document.body.style.overflow = 'auto';
-    
-    // --- NOWOŚĆ: To czyści pasek adresu (usuwa ?ogloszenie=...) ---
-    // Dzięki temu po odświeżeniu strony nie wróci Ci stare ogłoszenie
-    const czystyURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-    window.history.pushState({}, '', czystyURL);
-
-    // 4. Resetujemy wygląd okna
-    const mb = document.querySelector('.modal-box');
-    if(mb) mb.style.maxWidth = "1250px";
-    
-    window.czyOkienkoOtwarte = false;
-};
 window.zamknijIResetujModal = () => {
     const modalBox = document.querySelector('.modal-box');
     if(modalBox) modalBox.style.maxWidth = "1250px"; 
