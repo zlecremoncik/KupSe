@@ -664,7 +664,7 @@ window.pokazMojeOgloszenia = async (tab = 'aktywne') => {
     const { data: { user } } = await baza.auth.getUser();
     if (!user) return;
     const teraz = new Date();
-    const limit = 1000 * 60 * 60 * 24 * 28;
+    const limit = 1000 * 60 * 60 * 24 * 30; // 30 dni
     const moje = daneOgloszen.filter(o => o.user_email === user.email);
     const aktywne = moje.filter(o => (teraz - new Date(o.created_at)) < limit);
     const zakonczone = moje.filter(o => (teraz - new Date(o.created_at)) >= limit);
@@ -673,28 +673,56 @@ window.pokazMojeOgloszenia = async (tab = 'aktywne') => {
     const content = document.getElementById('view-content');
     content.innerHTML = `
         <button class="close-btn" onclick="window.zamknijModal()">&times;</button>
-        <h2>Moje ogłoszenia</h2>
-        <div style="display:flex; gap:15px; border-bottom:1px solid #eee; margin-bottom:15px;">
+        <h2 style="text-align:center; margin-bottom:20px;">Moje ogłoszenia</h2>
+        <div style="display:flex; gap:10px; border-bottom:1px solid #eee; margin-bottom:15px; justify-content:center;">
             <div onclick="window.pokazMojeOgloszenia('aktywne')" 
-                 style="padding:10px; cursor:pointer; font-weight:bold; border-bottom:3px solid ${tab === 'aktywne' ? 'var(--primary)' : 'transparent'}">
+                 style="padding:10px 20px; cursor:pointer; font-weight:800; font-size:14px; border-bottom:3px solid ${tab === 'aktywne' ? 'var(--primary)' : 'transparent'}; color:${tab === 'aktywne' ? 'var(--primary)' : '#666'}">
                  Aktywne (${aktywne.length})
             </div>
             <div onclick="window.pokazMojeOgloszenia('zakonczone')" 
-                 style="padding:10px; cursor:pointer; font-weight:bold; border-bottom:3px solid ${tab === 'zakonczone' ? 'var(--primary)' : 'transparent'}">
+                 style="padding:10px 20px; cursor:pointer; font-weight:800; font-size:14px; border-bottom:3px solid ${tab === 'zakonczone' ? 'var(--primary)' : 'transparent'}; color:${tab === 'zakonczone' ? 'var(--primary)' : '#666'}">
                  Zakończone (${zakonczone.length})
             </div>
         </div>
-        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:12px;">
-            ${wyswietlane.map(o => `
-                <div style="border:1px solid #ddd; border-radius:10px; overflow:hidden;">
-                    <img src="${o.zdjecia[0]}" style="width:100%; height:100px; object-fit:cover;">
-                    <div style="padding:8px;">
-                        <b style="font-size:13px;">${o.cena} zł</b>\n                        <div style="display:flex; gap:5px; margin-top:8px;">
-                            <button onclick="window.edytujOgloszenie(${o.id})" style="flex:1; padding:5px; font-size:11px;">Edytuj</button>
-                            <button onclick="window.usunOgloszenie(${o.id})" style="padding:5px; color:red; border:none; background:none; cursor:pointer;">🗑️</button>
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap:15px;">
+            ${wyswietlane.map(o => {
+                const dataStart = new Date(o.created_at);
+                const dataKoniec = new Date(dataStart.getTime() + limit);
+                const dniZostalo = Math.ceil((dataKoniec - teraz) / (1000 * 60 * 60 * 24));
+                const formatKoniec = `${String(dataKoniec.getDate()).padStart(2,'0')}.${String(dataKoniec.getMonth()+1).padStart(2,'0')}.${dataKoniec.getFullYear()}`;
+
+                return `
+                <div style="border:1px solid #eee; border-radius:15px; overflow:hidden; background:#fff; display:flex; flex-direction:column; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+                    <img src="${o.zdjecia[0]}" style="width:100%; height:110px; object-fit:cover;">
+                    <div style="padding:10px; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+                        <div>
+                            <b style="font-size:14px; color:var(--primary);">${o.cena} zł</b>
+                            <div style="font-size:12px; font-weight:600; margin-top:4px; height:32px; overflow:hidden;">${o.tytul}</div>
+                            
+                            ${tab === 'aktywne' ? `
+                                <div style="margin-top:10px; font-size:10px; background:#f0f9ff; padding:6px; border-radius:8px; border:1px solid #e0f2fe;">
+                                    ⌛ Pozostało: <b>${dniZostalo} dni</b><br>
+                                    📅 Do: ${formatKoniec}
+                                </div>
+                            ` : `
+                                <div style="margin-top:10px; font-size:10px; background:#fff1f2; padding:6px; border-radius:8px; border:1px solid #ffe4e6; color:#be123c;">
+                                    ❌ Wygasło: ${formatKoniec}
+                                </div>
+                            `}
+                        </div>
+
+                        <div style="display:flex; gap:5px; margin-top:12px;">
+                            ${tab === 'aktywne' ? `
+                                <button onclick="window.edytujOgloszenie(${o.id})" style="flex:1; padding:7px; font-size:11px; cursor:pointer; border-radius:8px; border:1px solid #ddd; background:#fff;">Edytuj</button>
+                            ` : `
+                                <button onclick="window.wznowOgloszenie(${o.id})" style="flex:1; padding:7px; font-size:11px; cursor:pointer; border-radius:8px; border:none; background:#111; color:#fff; font-weight:bold;">Wznów ponownie</button>
+                            `}
+                            <button onclick="window.usunOgloszenie(${o.id})" style="padding:7px; color:red; border:none; background:none; cursor:pointer; font-size:18px;">🗑️</button>
                         </div>
                     </div>
-                </div>`).join('')}
+                </div>`;
+            }).join('')}
+            ${wyswietlane.length === 0 ? '<p style="text-align:center; color:gray; grid-column:1/-1; padding:40px;">Brak ogłoszeń w tej kategorii.</p>' : ''}
         </div>`;
     document.getElementById('modal-view').style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -719,7 +747,21 @@ window.usunOgloszenie = async (id) => {
         alert("Błąd: " + err.message);
     }
 };
-
+window.wznowOgloszenie = async (id) => {
+    if (!confirm("Czy chcesz wznowić to ogłoszenie? Zostanie ono przedłużone o kolejne 30 dni od dzisiaj.")) return;
+    
+    // Ustawiamy nową datę na teraz
+    const nowaData = new Date().toISOString();
+    
+    const { error } = await baza.from('ogloszenia').update({ created_at: nowaData }).eq('id', id);
+    
+    if (error) {
+        alert("Błąd wznowienia: " + error.message);
+    } else {
+        alert("Ogłoszenie zostało wznowione!");
+        location.reload();
+    }
+};
 // --- KATEGORIE I RENDEROWANIE ---
 window.toggleSubcats = (kat) => {
     const p = document.getElementById('subcat-panel');
