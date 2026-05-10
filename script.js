@@ -927,19 +927,26 @@ window.wrocDoOgloszeniaLubZamknij = () => {
     }
 };
 window.zamknijModal = () => {
+    // 1. Zamykamy wszystkie okna
     document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+    
+    // 2. Przywracamy tytuł strony
     document.title = "KupSe24 - Twój Portal Ogłoszeniowy";
+
+    // 3. Przywracamy suwak strony
     document.body.style.overflow = 'auto';
     
-    // Czyścimy adres URL
+    // 4. Czyścimy adres URL (usuwamy ?ogloszenie=...)
     const czystyURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
     window.history.pushState({}, '', czystyURL);
 
-    // --- NOWOŚĆ: Czyścimy pamięć ogłoszenia ---
+    // 5. Czyścimy pamięć ogłoszenia
     window.obecneOgloszenieId = null; 
 
+    // 6. Resetujemy szerokość okna
     const mb = document.querySelector('.modal-box');
     if(mb) mb.style.maxWidth = "1250px";
+    
     window.czyOkienkoOtwarte = false;
 };
     document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
