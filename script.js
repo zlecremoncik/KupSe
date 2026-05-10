@@ -207,31 +207,6 @@ async function sprawdzUzytkownika() {
 }
 
 // --- MOJE OGŁOSZENIA (ZMNIEJSZONE OKNO) ---
-window.pokazMojeOgloszenia = async () => {
-    const { data: { user } } = await baza.auth.getUser();
-    const moje = daneOgloszen.filter(o => o.user_email === user.email);
-    const mb = document.querySelector('.modal-box');
-    if(mb) mb.style.maxWidth = "550px"; 
-
-    const content = document.getElementById('view-content');
-    content.innerHTML = `
-        <button class="close-btn" onclick="window.zamknijModal()">&times;</button>
-        <h2 style="text-align:center; margin-bottom:20px;">Moje ogłoszenia</h2>
-        <div style="display:flex; flex-direction:column; gap:10px;">
-            ${moje.map(o => `
-                <div style="display:flex; gap:15px; border:1px solid #eee; padding:10px; border-radius:12px; align-items:center; background:#fafafa;">
-                    <img src="${o.zdjecia[0]}" style="width:60px; height:60px; object-fit:cover; border-radius:8px;">
-                    <div style="flex:1;">
-                        <div style="font-weight:bold; font-size:14px;">${o.tytul}</div>
-                        <div style="color:var(--primary); font-weight:bold;">${o.cena} zł</div>
-                    </div>
-                    <button onclick="window.usunOgloszenie(${o.id})" style="background:none; border:none; color:red; cursor:pointer; font-size:20px;">🗑️</button>
-                </div>
-            `).join('')}
-            ${moje.length === 0 ? '<p style="text-align:center; color:gray;">Brak ogłoszeń.</p>' : ''}
-        </div>`;
-    document.getElementById('modal-view').style.display = 'flex';
-};
 
 // --- ULUBIONE (NAPRAWIONE I MNIEJSZE) ---
 window.pokazUlubione = () => {
@@ -381,30 +356,6 @@ window.toggleUserMenu = (e) => {
 
 window.wyloguj = async () => { await baza.auth.signOut(); location.reload(); };
 
-async function init() {
-    // 1. Ładujemy ogłoszenia
-    const { data } = await baza.from('ogloszenia').select('*').order('created_at', { ascending: false });
-    daneOgloszen = data || [];
-    renderTop12(daneOgloszen);
-    
-    // 2. Sprawdzamy logowanie
-    await sprawdzUzytkownika();
-
-    // 3. RADAR WIADOMOŚCI (Realtime)
-    const { data: { user } } = await baza.auth.getUser();
-    if (user) {
-        baza.channel('zmiany-wiadomosci')
-            .on('postgres_changes', { 
-                event: '*', 
-                schema: 'public', 
-                table: 'wiadomosci',
-                filter: `odbiorca=eq.${user.email}` 
-            }, () => {
-                sprawdzUzytkownika(); // Odśwież licznik gdy przyjdzie nowa wiadomość
-            })
-            .subscribe();
-    }
-}
 
 // --- SZCZEGÓŁY OGŁOSZENIA ---
 window.pokazSzczegoly = async (id) => {
@@ -685,7 +636,10 @@ window.pokazMojeOgloszenia = async (tab = 'aktywne') => {
     if (!user) return;
     const teraz = new Date();
     const limit = 1000 * 60 * 60 * 24 * 30; // 30 dni
-    const moje = daneOgloszen.filter(o => o.user_email === user.email);
+    
+    // Ta linijka poniżej została naprawiona (dodaliśmy toLowerCase):
+    const moje = daneOgloszen.filter(o => o.user_email.toLowerCase() === user.email.toLowerCase());
+    
     const aktywne = moje.filter(o => (teraz - new Date(o.created_at)) < limit);
     const zakonczone = moje.filter(o => (teraz - new Date(o.created_at)) >= limit);
     const wyswietlane = tab === 'aktywne' ? aktywne : zakonczone;
