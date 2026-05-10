@@ -271,7 +271,7 @@ window.pokazSkrzynke = async () => {
     const mb = document.querySelector('.modal-box');
     if(mb) mb.style.maxWidth = "450px"; 
 
-    let html = `<bu    let html = `<button class="close-btn" onclick="window.wrocDoOgloszeniaLubZamknij()">&times;</button>tton class="close-btn" onclick="window.zamknijModal()">&times;</button>
+    let html = `<button class="close-btn" onclick="window.wrocDoOgloszeniaLubZamknij()">&times;</button>
                 <h2 style="text-align:center; margin-bottom:20px;">Wiadomości</h2>
                 <div style="display:flex; flex-direction:column; gap:8px;">`;
 
@@ -311,7 +311,7 @@ window.otworzChat = async (zKim) => {
                 <button onclick="window.pokazSkrzynke()" style="background:none; border:none; font-size:20px; cursor:pointer;">←</button>
                 <h4 style="margin:0;">${dajNazwe(zKim)}</h4>
             </div>
-                        <button class="close-btn" onclick="window.wrocDoOgloszeniaLubZamknij()" style="position:static; font-size:25px;">&times;</button>window.history.pushState({}, '', czystyURL);
+                        <button class="close-btn" onclick="window.wrocDoOgloszeniaLubZamknij()" style="position:static; font-size:25px;">&times;</button>
         </div>
         <div id="chat-window" style="height:350px; overflow-y:auto; background:#ffffff; padding:10px; border:1px solid #eee; border-radius:12px; display:flex; flex-direction:column; gap:8px;">
             ${msg.map(m => {
@@ -944,7 +944,9 @@ window.zamknijModal = () => {
     // --- NOWOŚĆ: Czyścimy adres URL (usuwamy ?id=...) ---
     const czystyURL = window.location.pathname;
     window.history.pushState({}, '', czystyURL);
-window.obecneOgloszenieId = null;
+    
+    window.obecneOgloszenieId = null;
+
     // 4. Resetujemy wygląd
     const mb = document.querySelector('.modal-box');
     if(mb) mb.style.maxWidth = "1250px";
