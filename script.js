@@ -631,14 +631,37 @@ window.wyslijOgloszenie = async (e) => {
 window.pokazMojeOgloszenia = async (tab = 'aktywne') => {
     const { data: { user } } = await baza.auth.getUser();
     if (!user) return;
+
+    // Pobieramy najświeższe dane prosto z bazy, żeby mieć pewność, że nic nie umknęło
+    const { data: mojeDane, error } = await baza.from('ogloszenia')
+        .select('*')
+        .ilike('user_email', user.email.trim())
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error("Błąd pobierania moich ogłoszeń:", error);
+        return;
+    }
+
     const teraz = new Date();
     const limit = 1000 * 60 * 60 * 24 * 30; // 30 dni
-    
-    // Ta linijka poniżej została naprawiona (dodaliśmy toLowerCase):
-    const moje = daneOgloszen.filter(o => o.user_email.toLowerCase() === user.email.toLowerCase());
-    
-    const aktywne = moje.filter(o => (teraz - new Date(o.created_at)) < limit);
-    const zakonczone = moje.filter(o => (teraz - new Date(o.created_at)) >= limit);
+
+    // Bezpieczne filtrowanie (odporne na null i wielkość liter)
+    const moje = (mojeDane || []).filter(o => 
+        o.user_email && 
+        o.user_email.toLowerCase().trim() === user.email.toLowerCase().trim()
+    );
+
+    const aktywne = moje.filter(o => {
+        const dataOgl = new Date(o.created_at);
+        return !isNaN(dataOgl) && (teraz - dataOgl) < limit;
+    });
+
+    const zakonczone = moje.filter(o => {
+        const dataOgl = new Date(o.created_at);
+        return isNaN(dataOgl) || (teraz - dataOgl) >= limit;
+    });
+
     const wyswietlane = tab === 'aktywne' ? aktywne : zakonczone;
 
     const content = document.getElementById('view-content');
@@ -660,11 +683,14 @@ window.pokazMojeOgloszenia = async (tab = 'aktywne') => {
                 const dataStart = new Date(o.created_at);
                 const dataKoniec = new Date(dataStart.getTime() + limit);
                 const dniZostalo = Math.ceil((dataKoniec - teraz) / (1000 * 60 * 60 * 24));
-                const formatKoniec = `${String(dataKoniec.getDate()).padStart(2,'0')}.${String(dataKoniec.getMonth()+1).padStart(2,'0')}.${dataKoniec.getFullYear()}`;
+                const formatKoniec = isNaN(dataKoniec) ? "---" : `${String(dataKoniec.getDate()).padStart(2,'0')}.${String(dataKoniec.getMonth()+1).padStart(2,'0')}.${dataKoniec.getFullYear()}`;
+                
+                // Zabezpieczenie zdjęcia
+                const foto = (o.zdjecia && o.zdjecia.length > 0) ? o.zdjecia[0] : 'https://via.placeholder.com/300x200?text=Brak+zdjecia';
 
                 return `
                 <div style="border:1px solid #eee; border-radius:15px; overflow:hidden; background:#fff; display:flex; flex-direction:column; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-                    <img src="${o.zdjecia[0]}" style="width:100%; height:110px; object-fit:cover;">
+                    <img src="${foto}" style="width:100%; height:110px; object-fit:cover;">
                     <div style="padding:10px; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
                         <div>
                             <b style="font-size:14px; color:var(--primary);">${o.cena} zł</b>
@@ -672,7 +698,7 @@ window.pokazMojeOgloszenia = async (tab = 'aktywne') => {
                             
                             ${tab === 'aktywne' ? `
                                 <div style="margin-top:10px; font-size:10px; background:#f0f9ff; padding:6px; border-radius:8px; border:1px solid #e0f2fe;">
-                                    ⌛ Pozostało: <b>${dniZostalo} dni</b><br>
+                                    ⏳ Pozostało: <b>${dniZostalo > 0 ? dniZostalo : 0} dni</b><br>
                                     📅 Do: ${formatKoniec}
                                 </div>
                             ` : `
@@ -686,7 +712,7 @@ window.pokazMojeOgloszenia = async (tab = 'aktywne') => {
                             ${tab === 'aktywne' ? `
                                 <button onclick="window.edytujOgloszenie(${o.id})" style="flex:1; padding:7px; font-size:11px; cursor:pointer; border-radius:8px; border:1px solid #ddd; background:#fff;">Edytuj</button>
                             ` : `
-                                <button onclick="window.wznowOgloszenie(${o.id})" style="flex:1; padding:7px; font-size:11px; cursor:pointer; border-radius:8px; border:none; background:#111; color:#fff; font-weight:bold;">Wznów ponownie</button>
+                                <button onclick="window.wznowOgloszenie(${o.id})" style="flex:1; padding:7px; font-size:11px; cursor:pointer; border-radius:8px; border:none; background:#111; color:#fff; font-weight:bold;">Wznów</button>
                             `}
                             <button onclick="window.usunOgloszenie(${o.id})" style="padding:7px; color:red; border:none; background:none; cursor:pointer; font-size:18px;">🗑️</button>
                         </div>
@@ -695,6 +721,7 @@ window.pokazMojeOgloszenia = async (tab = 'aktywne') => {
             }).join('')}
             ${wyswietlane.length === 0 ? '<p style="text-align:center; color:gray; grid-column:1/-1; padding:40px;">Brak ogłoszeń w tej kategorii.</p>' : ''}
         </div>`;
+    
     document.getElementById('modal-view').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 };
