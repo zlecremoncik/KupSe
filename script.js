@@ -394,26 +394,20 @@ window.pokazSzczegoly = async (id) => {
     const o = daneOgloszen.find(x => x.id === id);
     if (!o) return;
 
-    // POPRAWKA SEO: Zmieniamy tytuł strony na nazwę ogłoszenia
+    // --- NOWOŚĆ: Zmiana adresu URL w przeglądarce ---
+    const nowyURL = new URL(window.location);
+    nowyURL.searchParams.set('id', id);
+    window.history.pushState({id: id}, '', nowyURL);
+
     document.title = `${o.tytul} - ${o.cena} zł | KupSe24.pl`;
 
-    // Dodajemy małe zabezpieczenie, żeby okno nie "mignęło" bez danych użytkownika
     let { data: { user } } = await baza.auth.getUser();
-    
-    // Jeśli getUser() nic nie zwrócił, spróbujmy pobrać sesję jeszcze raz (ważne na telefonach)
-        if (!user) {
+    if (!user) {
         const session = await baza.auth.getSession();
         user = session.data?.session?.user || null;
     }
 
-    // Informujemy telefon, że otworzyliśmy okno
-    if (!window.czyOkienkoOtwarte) {
-        history.pushState({ modalOpen: true }, "");
-        window.czyOkienkoOtwarte = true;
-    }
-
     window.aktualneFotki = Array.isArray(o.zdjecia) ? o.zdjecia : [o.zdjecia];
-    
     const telFormat = o.telefon ? o.telefon.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : 'Brak numeru';
     const telefonWidok = user ? `<b>${telFormat}</b>` : `<span style="color:red; font-size:12px;">[Zaloguj się]</span>`;
     
@@ -425,7 +419,7 @@ window.pokazSzczegoly = async (id) => {
         ? `<button onclick="window.pokazWynikiModal(ostatniTytul, ostatnieWyniki)" style="margin-bottom:15px; background:#eee; border:none; padding:8px 15px; border-radius:8px; cursor:pointer; font-weight:bold;">← Powrót</button>` 
         : "";
 
-        document.getElementById('view-content').innerHTML = `
+    document.getElementById('view-content').innerHTML = `
         <button class="close-btn" onclick="window.zamknijModal()">&times;</button>
         ${btnWstecz}
         <div style="display:flex; flex-direction: column; gap:15px; margin-top: 25px;">
@@ -920,17 +914,20 @@ window.zamknijModal = () => {
     // 1. Ukrywamy wszystkie okna
     document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
     
-    // POPRAWKA SEO: Przywracamy główny tytuł strony
-    document.title = "KupSe - Twój Portal Ogłoszeniowy";
+    // 2. Przywracamy domyślny tytuł
+    document.title = "KupSe24 - Twój Portal Ogłoszeniowy";
 
-    // 2. Przywracamy przewijanie strony głównej
+    // 3. Przywracamy przewijanie strony
     document.body.style.overflow = 'auto';
     
-    // 3. Resetujemy szerokość okna (żeby wiadomości nie były za szerokie)
+    // --- NOWOŚĆ: Czyścimy adres URL (usuwamy ?id=...) ---
+    const czystyURL = window.location.pathname;
+    window.history.pushState({}, '', czystyURL);
+
+    // 4. Resetujemy wygląd
     const mb = document.querySelector('.modal-box');
     if(mb) mb.style.maxWidth = "1250px";
     
-    // 4. Mówimy systemowi, że okno jest już zamknięte
     window.czyOkienkoOtwarte = false;
 };
 
@@ -1139,11 +1136,15 @@ window.addEventListener('popstate', function(event) {
     const modalView = document.getElementById('modal-view');
     const modalForm = document.getElementById('modal-form');
     
-    // Sprawdzamy czy któreś okno jest widoczne
     const czyWidacPodglad = modalView && modalView.style.display === 'flex';
     const czyWidacFormularz = modalForm && modalForm.style.display === 'flex';
 
+    // Jeśli użytkownik cofa, a okno jest otwarte - po prostu je zamykamy
     if (czyWidacPodglad || czyWidacFormularz) {
-        window.zamknijModal(); // Jeśli okno było otwarte - zamknij je
+        // Czyścimy wszystko bez dodawania nowej historii
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        document.body.style.overflow = 'auto';
+        document.title = "KupSe24 - Twój Portal Ogłoszeniowy";
+        window.czyOkienkoOtwarte = false;
     }
 });
