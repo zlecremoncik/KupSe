@@ -524,7 +524,27 @@ window.otworzFullFoto = () => {
     `;
     lb.style.display = 'flex';
 };
+window.navFullFoto = (kierunek) => {
+    // 1. Sprawdzamy czy mamy zdjęcia do przełączania
+    if (!window.aktualneFotki || window.aktualneFotki.length <= 1) return;
 
+    // 2. Zmieniamy numer aktualnego zdjęcia
+    window.aktualneZdjecieIndex += kierunek;
+
+    // 3. Jeśli wyjdziemy poza zakres, zapętlamy (z ostatniego na pierwsze i odwrotnie)
+    if (window.aktualneZdjecieIndex >= window.aktualneFotki.length) {
+        window.aktualneZdjecieIndex = 0;
+    }
+    if (window.aktualneZdjecieIndex < 0) {
+        window.aktualneZdjecieIndex = window.aktualneFotki.length - 1;
+    }
+
+    // 4. Podmieniamy fizycznie obrazek w oknie podglądu
+    const img = document.getElementById('lb-img');
+    if (img) {
+        img.src = window.aktualneFotki[window.aktualneZdjecieIndex];
+    }
+};
 window.udostepnijOgloszenie = (e, id) => {
     if(e) e.stopPropagation();
     // Tworzymy link prowadzący prosto do tego ogłoszenia
