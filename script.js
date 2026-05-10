@@ -205,9 +205,6 @@ async function sprawdzUzytkownika() {
         nav.innerHTML = `<button onclick="document.getElementById('auth-box').scrollIntoView({behavior:'smooth'})" class="btn-account">Zaloguj się</button>`;
     }
 }
-
-// --- MOJE OGŁOSZENIA (ZMNIEJSZONE OKNO) ---
-
 // --- ULUBIONE (NAPRAWIONE I MNIEJSZE) ---
 window.pokazUlubione = () => {
     const okno = document.getElementById('modal-view');
