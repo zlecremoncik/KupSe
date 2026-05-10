@@ -359,13 +359,6 @@ window.wyslijZChatu = async (odbiorca) => {
 };
 
 // --- FUNKCJE SYSTEMOWE ---
-window.zamknijModal = () => {
-    const mb = document.querySelector('.modal-box');
-    if(mb) mb.style.maxWidth = "1250px"; 
-    document.getElementById('modal-view').style.display = 'none';
-    // Ta linia poniżej naprawia problem ze znikającym suwakiem:
-    document.body.style.overflow = 'auto'; 
-};
 window.toggleUserMenu = (e) => { 
     e.stopPropagation(); 
     const m = document.getElementById('drop-menu'); 
@@ -923,26 +916,26 @@ window.pokazUlubione = () => {
 };
 
 window.zamknijModal = () => {
-    // 1. Ukrywamy wszystkie okna
+    // 1. Ukrywamy wszystkie okna (ogłoszenia, formularze itp.)
     document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
     
-    // 2. Przywracamy domyślny tytuł
+    // 2. Przywracamy domyślny tytuł strony
     document.title = "KupSe24 - Twój Portal Ogłoszeniowy";
 
-    // 3. Przywracamy przewijanie strony
+    // 3. Przywracamy przewijanie strony głównej
     document.body.style.overflow = 'auto';
     
-    // --- NOWOŚĆ: Czyścimy adres URL (usuwamy ?id=...) ---
-    const czystyURL = window.location.pathname;
+    // --- NOWOŚĆ: To czyści pasek adresu (usuwa ?ogloszenie=...) ---
+    // Dzięki temu po odświeżeniu strony nie wróci Ci stare ogłoszenie
+    const czystyURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
     window.history.pushState({}, '', czystyURL);
 
-    // 4. Resetujemy wygląd
+    // 4. Resetujemy wygląd okna
     const mb = document.querySelector('.modal-box');
     if(mb) mb.style.maxWidth = "1250px";
     
     window.czyOkienkoOtwarte = false;
 };
-
 window.zamknijIResetujModal = () => {
     const modalBox = document.querySelector('.modal-box');
     if(modalBox) modalBox.style.maxWidth = "1250px"; 
