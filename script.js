@@ -67,8 +67,16 @@ const formatujDate = (d) => {
     const dzien = String(dataObj.getDate()).padStart(2, '0');
     const miesiac = String(dataObj.getMonth() + 1).padStart(2, '0');
     const rok = dataObj.getFullYear();
-    return `${dzien}.${miesiac}.${rok}`;
+    const godzina = String(dataObj.getHours()).padStart(2, '0');
+    const minuta = String(dataObj.getMinutes()).padStart(2, '0');
+    
+    // Zwraca teraz format: 12.05.2024 o 14:30
+    return `${dzien}.${miesiac}.${rok} o ${godzina}:${minuta}`;
 };
+Dlaczego wcześniej wyświetlało tylko datę? Ponieważ w Twoim kodzie funkcja formatujDate miała zdefiniowane tylko zmienne dzien, miesiac i rok, a w linii return brakowało pobierania godzin (getHours()) i minut (getMinutes()). Powyższa poprawka to naprawia.
+
+AI
+: Gemini 3 Flash
 
 let daneOgloszen = [];
 let mojeUlubione = [];
@@ -361,10 +369,13 @@ window.pokazSzczegoly = async (id) => {
     
     window.obecneOgloszenieId = id; 
 
-    // --- NOWOŚĆ: Budujemy ładny link ---
+    // --- LOGIKA LICZNIKA: Zwiększamy liczbę wyświetleń w bazie ---
+    const aktualneWyswietlenia = (o.wyswietlenia || 0) + 1;
+    o.wyswietlenia = aktualneWyswietlenia; // aktualizacja lokalna
+    await baza.from('ogloszenia').update({ wyswietlenia: aktualneWyswietlenia }).eq('id', id);
+
     const ladnyTytul = zrobLadnyTytul(o.tytul);
     const nowyURL = new URL(window.location);
-    // Adres będzie wyglądał tak: ?ogloszenie=nissan-qashqai-123
     nowyURL.searchParams.set('ogloszenie', `${ladnyTytul}-${o.id}`);
     window.history.pushState({id: o.id}, '', nowyURL);
 
@@ -389,14 +400,9 @@ window.pokazSzczegoly = async (id) => {
         : "";
 
     document.getElementById('view-content').innerHTML = `
-        <!-- NOWOCZESNY PASEK GÓRNY (ROZDZIELA PRZYCISKI) -->
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0;">
-            <div>
-                ${btnWstecz}
-            </div>
-            <button class="close-btn" onclick="window.zamknijModal()" style="position:static; background:#f5f5f5; border:none; width:35px; height:35px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:22px; color:#333; transition: 0.3s;">
-                &times;
-            </button>
+            <div>${btnWstecz}</div>
+            <button class="close-btn" onclick="window.zamknijModal()" style="position:static; background:#f5f5f5; border:none; width:35px; height:35px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:22px; color:#333;">&times;</button>
         </div>
 
         <div style="display:flex; flex-direction: column; gap:15px;">
@@ -422,14 +428,19 @@ window.pokazSzczegoly = async (id) => {
                 </div>
                 <h3 style="margin-top:20px; font-size:16px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Opis</h3>
                 <div style="background: #f9f9f9; padding: 15px; border-radius: 12px; margin-top: 10px;">
-                    <p style="white-space:pre-line; font-size:14px; line-height:1.6; color:#333;">${o.opis}</p>
+                    <!-- PUNKT 2: Styl white-space: pre-wrap zachowuje akapity i entery -->
+                    <p style="white-space: pre-wrap; font-size:14px; line-height:1.6; color:#333; margin:0;">${o.opis}</p>
+                </div>
+                
+                <!-- PUNKT 1: Wyświetlanie licznika na dole -->
+                <div style="margin-top:20px; padding-top:10px; border-top:1px solid #eee; color:gray; font-size:12px; display:flex; align-items:center; gap:5px;">
+                    👁️ Wyświetleń ogłoszenia: <b>${o.wyswietlenia || 0}</b>
                 </div>
             </div>
         </div>`;
     document.getElementById('modal-view').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 };
-
 window.zmienGlowneZdjecie = (idx) => {
     window.aktualneZdjecieIndex = idx;
     const mainImg = document.getElementById('mainFoto');
