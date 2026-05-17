@@ -18,7 +18,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-    <script src="https://www.google.com/recaptcha/api.js?render=6LfVf-4sAAAAAEZe9meKaYUr_PoWliZW5n1fgWVj"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ff4f00; --bg: #f3f4f7; --white: #ffffff; --text: #111827; --gray: #6b7280; }
@@ -399,10 +399,11 @@
     <label style="display: flex; gap: 8px; cursor: pointer;">
         <input type="checkbox" id="reg-zgoda-marketing" style="width: auto;">
         <span>Chcę otrzymywać informacje o promocjach i nowych ogłoszeniach.</span>
-    </label>
+     </label>
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAADREjp5OyDwBnHMN" data-callback="turnstileCallback" style="margin-top: 15px;"></div>
 </div>
-    <button onclick="window.zarejestruj()" style="width:100%; background:#111; border:none; padding:14px; border-radius:12px; font-weight:800; cursor:pointer; color:white">Załóż konto</button>
-    
+    <button onclick="window.zarejestruj()"
+        
     <p style="font-size:13px">Masz konto? <a href="javascript:void(0)" onclick="document.getElementById('register-view').classList.add('hidden'); document.getElementById('login-view').classList.remove('hidden')" style="color:var(--primary); font-weight:bold">Zaloguj się</a></p>
 </div>
 
