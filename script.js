@@ -364,68 +364,47 @@ window.pokazSzczegoly = async (id) => {
     
     window.obecneOgloszenieId = id; 
 
-    // --- NOWOŚĆ: Budujemy ładny link ---
+    // LICZNIK: Wysyłamy +1 do bazy
+    o.wyswietlenia = (o.wyswietlenia || 0) + 1;
+    await baza.from('ogloszenia').update({ wyswietlenia: o.wyswietlenia }).eq('id', id);
+
     const ladnyTytul = zrobLadnyTytul(o.tytul);
     const nowyURL = new URL(window.location);
-    // Adres będzie wyglądał tak: ?ogloszenie=nissan-qashqai-123
     nowyURL.searchParams.set('ogloszenie', `${ladnyTytul}-${o.id}`);
     window.history.pushState({id: o.id}, '', nowyURL);
 
-    document.title = `${o.tytul} - ${o.cena} zł | KupSe24.pl`;
-
     let { data: { user } } = await baza.auth.getUser();
-    if (!user) {
-        const session = await baza.auth.getSession();
-        user = session.data?.session?.user || null;
-    }
-
     window.aktualneFotki = Array.isArray(o.zdjecia) ? o.zdjecia : [o.zdjecia];
+    
     const telFormat = o.telefon ? o.telefon.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : 'Brak numeru';
     const telefonWidok = user ? `<b>${telFormat}</b>` : `<span style="color:red; font-size:12px;">[Zaloguj się]</span>`;
-    
-    const przyciskChatu = (user && user.email !== o.user_email) 
-        ? `<button onclick="event.stopPropagation(); window.otworzChat('${o.user_email}')" style="flex:1; padding:15px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">✉ Wyślij wiadomość</button>`
-        : `<p style="font-size:11px; color:gray; text-align:center; width:100%;">Zaloguj się, aby napisać</p>`;
-
-    const btnWstecz = ostatnieWyniki.length > 0 
-        ? `<button onclick="window.pokazWynikiModal(ostatniTytul, ostatnieWyniki)" style="background:#f5f5f5; border:none; padding:8px 16px; border-radius:20px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:6px; font-size:13px; color:#333; transition: 0.2s;">← Powrót</button>` 
-        : "";
 
     document.getElementById('view-content').innerHTML = `
-        <!-- NOWOCZESNY PASEK GÓRNY (ROZDZIELA PRZYCISKI) -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0;">
-            <div>
-                ${btnWstecz}
-            </div>
-            <button class="close-btn" onclick="window.zamknijModal()" style="position:static; background:#f5f5f5; border:none; width:35px; height:35px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:22px; color:#333; transition: 0.3s;">
-                &times;
-            </button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <button class="close-btn" onclick="window.zamknijModal()" style="position:static;">&times;</button>
         </div>
 
         <div style="display:flex; flex-direction: column; gap:15px;">
-            <div style="width:100%;">
-                <div style="background:#000; border-radius:15px; height:280px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
-                    <img id="mainFoto" src="${window.aktualneFotki[0]}" style="max-width:100%; max-height:100%; object-fit: contain;" onclick="window.otworzFullFoto()">
-                </div>
-                <div style="display:flex; gap:8px; margin-top:10px; overflow-x:auto; padding-bottom:5px;">
-                    ${window.aktualneFotki.map((img, i) => `<img src="${img}" onclick="window.zmienGlowneZdjecie(${i})" class="mini-foto" style="width:60px; height:60px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid ${i===0?'var(--primary)':'transparent'}; flex-shrink:0;">`).join('')}
-                </div>
+            <div style="background:#000; border-radius:15px; height:280px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                <img id="mainFoto" src="${window.aktualneFotki[0]}" style="max-width:100%; max-height:100%; object-fit: contain;">
             </div>
             <div style="width:100%;">
                 <div style="font-size:11px; color:gray;">Dodano: ${formatujDate(o.created_at)}</div>
                 <h2 style="font-size:18px; margin:10px 0;">${o.tytul}</h2>
                 <h1 style="color:var(--primary); font-size:24px; margin:5px 0;">${o.cena} zł</h1>
-                <p style="font-size:14px;">📍 ${o.lokalizacja} | 📞 ${telefonWidok}</p>
+                <p>📍 ${o.lokalizacja} | 📞 ${telefonWidok}</p>
                 <div style="display:flex; gap:10px; margin-top:15px; align-items:center;">
-                    ${przyciskChatu}
-                    <button onclick="window.udostepnijOgloszenie(event, ${o.id})" style="padding:15px; background:#f0f0f0; border:none; border-radius:10px; cursor:pointer; font-size:20px;">🔗</button>
-                    <button onclick="window.toggleUlubione(event, ${o.id})" class="fav-btn-${o.id}" style="padding:15px; background:#f0f0f0; border:none; border-radius:10px; cursor:pointer; font-size:20px;">
-                        ${mojeUlubione.includes(o.id) ? '❤️' : '🤍'}
+                    <button onclick="window.toggleUlubione(event, ${o.id})" class="fav-btn-${o.id}" style="padding:15px; background:#f0f0f0; border:none; border-radius:10px; cursor:pointer; font-size:20px; color:red;">
+                        ${mojeUlubione.includes(o.id) ? '❤️' : '♡'}
                     </button>
                 </div>
                 <h3 style="margin-top:20px; font-size:16px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Opis</h3>
                 <div style="background: #f9f9f9; padding: 15px; border-radius: 12px; margin-top: 10px;">
-                    <p style="white-space:pre-line; font-size:14px; line-height:1.6; color:#333;">${o.opis}</p>
+                    <!-- KLUCZOWA ZMIANA: pre-wrap zachowuje każdą spację, myślnik i enter -->
+                    <p style="white-space: pre-wrap; font-size:14px; line-height:1.6; color:#333; margin:0; font-family:inherit;">${o.opis}</p>
+                </div>
+                <div style="margin-top:20px; padding:10px; border-top:1px solid #eee; color:gray; font-size:12px;">
+                    👁️ Wyświetleń ogłoszenia: <b>${o.wyswietlenia}</b>
                 </div>
             </div>
         </div>`;
@@ -918,13 +897,12 @@ window.zastosujFiltryBoczne = () => {
 function renderCardHTML(o) {
     const isFav = mojeUlubione.includes(o.id);
     const pelnaData = formatujDate(o.created_at);
-    // Jeśli nie ma zdjęć, użyj obrazka zastępczego
     const fotoUrl = (o.zdjecia && o.zdjecia.length > 0) ? o.zdjecia[0] : 'https://via.placeholder.com/300x200?text=Brak+zdjęcia';
     
     return `
         <div class="ad-card" onclick="window.pokazSzczegoly(${o.id})" style="background:white; border-radius:12px; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.1); cursor:pointer; position:relative;">
-            <div onclick="event.stopPropagation(); window.toggleUlubione(event, ${o.id})" class="fav-btn-${o.id}" style="position:absolute; top:10px; right:10px; z-index:100; background:rgba(255,255,255,0.9); width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow: 0 2px 8px rgba(0,0,0,0.3); font-size: 20px;">
-                ${isFav ? '❤️' : '🤍'}
+            <div onclick="event.stopPropagation(); window.toggleUlubione(event, ${o.id})" class="fav-btn-${o.id}" style="position:absolute; top:10px; right:10px; z-index:100; background:rgba(255,255,255,0.9); width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow: 0 2px 8px rgba(0,0,0,0.3); font-size: 20px; color:red;">
+                ${isFav ? '❤️' : '♡'}
             </div>
             <img src="${o.zdjecia[0]}" style="width:100%; height:150px; object-fit:cover;">
             <div style="padding:12px;">
