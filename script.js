@@ -67,7 +67,9 @@ const formatujDate = (d) => {
     const dzien = String(dataObj.getDate()).padStart(2, '0');
     const miesiac = String(dataObj.getMonth() + 1).padStart(2, '0');
     const rok = dataObj.getFullYear();
-    return `${dzien}.${miesiac}.${rok}`;
+    const h = String(dataObj.getHours()).padStart(2, '0');
+    const m = String(dataObj.getMinutes()).padStart(2, '0');
+    return `${dzien}.${miesiac}.${rok} ${h}:${m}`;
 };
 
 let daneOgloszen = [];
