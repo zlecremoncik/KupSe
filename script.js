@@ -151,10 +151,20 @@ window.zarejestruj = async () => {
         return alert("Hasło nie spełnia wymogów:\n• min. 8 znaków\n• duża litera\n• liczba\n• znak specjalny");
     }
 
-    if (!zgoda) return alert("Musisz zaakceptować regulamin!");
+        if (!zgoda) return alert("Musisz zaakceptować regulamin!");
 
-    const { data, error } = await baza.auth.signUp({ email, password });
-    if (error) alert("Błąd: " + error.message);
+    const token = turnstile.getResponse();
+    if (!token) return alert("Potwierdź, że nie jesteś robotem!");
+
+    const { data, error } = await baza.auth.signUp({ 
+        email, 
+        password,
+        options: { captchaToken: token }
+    });
+    if (error) {
+        alert("Błąd: " + error.message);
+        turnstile.reset();
+    }
     else {
         alert("Konto utworzone! Wysłaliśmy link aktywacyjny na Twój e-mail. Musisz go kliknąć, aby móc się zalogować.");
         location.reload();
