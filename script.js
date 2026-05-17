@@ -148,22 +148,16 @@ window.zarejestruj = async () => {
 
     if (!email || !password) return alert("Wypełnij email i hasło!");
     const passRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
-    if (!passRegex.test(password)) return alert("Hasło nie spełnia wymogów!");
-    if (!zgoda) return alert("Musisz zaakceptować regulamin!");
+    if (!passRegex.test(password)) return alert("Hasło za słabe!");
+    if (!zgoda) return alert("Zaakceptuj regulamin!");
 
-    // reCAPTCHA v3
     grecaptcha.ready(function() {
-        grecaptcha.execute('TWÓJ_KLUCZ_STRONY', {action: 'submit'}).then(async function(token) {
+        grecaptcha.execute('6LfVf-4sAAAAAEZe9meKaYUr_PoWliZW5n1fgWVj', {action: 'submit'}).then(async function(token) {
             const { data, error } = await baza.auth.signUp({ 
-                email, 
-                password,
-                options: { data: { captchaToken: token } } 
+                email, password, options: { captchaToken: token } 
             });
             if (error) alert("Błąd: " + error.message);
-            else {
-                alert("Konto utworzone! Sprawdź e-mail.");
-                location.reload();
-            }
+            else { alert("Sprawdź e-mail, aby aktywować konto!"); location.reload(); }
         });
     });
 };
