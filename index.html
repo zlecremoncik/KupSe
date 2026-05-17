@@ -18,8 +18,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
         :root { --primary: #ff4f00; --bg: #f3f4f7; --white: #ffffff; --text: #111827; --gray: #6b7280; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; color: var(--text); overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
@@ -399,11 +399,10 @@
     <label style="display: flex; gap: 8px; cursor: pointer;">
         <input type="checkbox" id="reg-zgoda-marketing" style="width: auto;">
         <span>Chcę otrzymywać informacje o promocjach i nowych ogłoszeniach.</span>
-     </label>
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAAADREjp5OyDwBnHMN" data-callback="turnstileCallback" style="margin-top: 15px;"></div>
+    </label>
 </div>
-    <button onclick="window.zarejestruj()"
-        
+    <button onclick="window.zarejestruj()" style="width:100%; background:#111; border:none; padding:14px; border-radius:12px; font-weight:800; cursor:pointer; color:white">Załóż konto</button>
+    
     <p style="font-size:13px">Masz konto? <a href="javascript:void(0)" onclick="document.getElementById('register-view').classList.add('hidden'); document.getElementById('login-view').classList.remove('hidden')" style="color:var(--primary); font-weight:bold">Zaloguj się</a></p>
 </div>
 
@@ -523,10 +522,6 @@
 
 <script src="script.js"></script>
 
-<div id="help-trigger" onclick="window.pokazModalPrawny('kontakt')" style="position:fixed; bottom:20px; right:20px; background:#ff4f00; color:white; padding:12px 20px; border-radius:50px; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.2); z-index:999; font-weight:800; display:flex; align-items:center; gap:8px;">
-    <span>?</span> Pomoc i Kontakt
-</div>
-
 <div id="cookie-bar" style="position: fixed; bottom: 0; left: 0; right: 0; background: #111; color: white; padding: 15px; text-align: center; font-size: 13px; z-index: 9999; display: none; justify-content: center; align-items: center; gap: 20px;">
     <span>Ta strona używa ciasteczek (cookies), aby działać poprawnie.</span>
     <button onclick="zaakceptujCookies()" style="background: var(--primary); border: none; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">Rozumiem</button>
@@ -599,16 +594,15 @@
                 <p>Serwis wykorzystuje pliki cookies do celów statystycznych, marketingowych oraz zapewnienia prawidłowego działania funkcji technicznych (logowanie, zapamiętywanie preferencji).</p>
             </div>
         `;
-        } else if(typ === 'kontakt') {
-        tytul = "Pomoc techniczna KupSe24";
+    } else if(typ === 'kontakt') {
+        tytul = "Centrum Pomocy i Kontakt";
         tresc = `
-            <div style="text-align: left;">
-                <p>Napisz do nas, jeśli masz pytanie lub problem:</p>
-                <div style="display:grid; gap:10px; background:#f9f9f9; padding:15px; border-radius:12px;">
-                    <input type="text" id="h-email" placeholder="Twój e-mail" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;">
-                    <textarea id="h-wiadomosc" placeholder="W czym możemy pomóc?" style="width:100%; height:100px; padding:10px; border-radius:8px; border:1px solid #ddd; font-family:inherit;"></textarea>
-                    <button onclick="window.wyslijZgloszeniePomocy()" style="background:#111; color:white; border:none; padding:12px; border-radius:10px; cursor:pointer; font-weight:800;">Wyślij do obsługi</button>
-                </div>
+            <div style="text-align: center; padding: 20px;">
+                <p>Masz pytania lub chcesz zgłosić nadużycie?</p>
+                <h3 style="color: var(--primary);">kontakt@kupse24.pl</h3>
+                <p>Nasze biuro obsługi klienta pracuje:<br><strong>Poniedziałek - Piątek: 09:00 - 17:00</strong></p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="font-size: 12px; color: #666;">Zgłoszenia dotyczące nielegalnych treści lub oszustw są rozpatrywane w trybie priorytetowym (do 24h).</p>
             </div>
         `;
     }
