@@ -368,6 +368,10 @@ window.wyloguj = async () => { await baza.auth.signOut(); location.reload(); };
 window.pokazSzczegoly = async (id) => {
     const o = daneOgloszen.find(x => x.id === id);
     if (!o) return;
+
+    // Zwiększamy licznik odwiedzin lokalnie i w bazie Supabase
+    o.wyswietlenia = (o.wyswietlenia || 0) + 1;
+    baza.from('ogloszenia').update({ wyswietlenia: o.wyswietlenia }).eq('id', id).then();
     
     window.obecneOgloszenieId = id; 
 
@@ -433,6 +437,9 @@ window.pokazSzczegoly = async (id) => {
                 <h3 style="margin-top:20px; font-size:16px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Opis</h3>
                 <div style="background: #f9f9f9; padding: 15px; border-radius: 12px; margin-top: 10px;">
                     <p style="white-space:pre-line; font-size:14px; line-height:1.6; color:#333;">${o.opis}</p>
+                </div>
+                <div style="margin-top: 15px; font-size: 12px; color: #777; text-align: right; border-top: 1px solid #eee; padding-top: 10px;">
+                    👁️ Wyświetlenia strony: <b>${o.wyswietlenia}</b>
                 </div>
             </div>
         </div>`;
