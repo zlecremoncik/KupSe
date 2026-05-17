@@ -147,28 +147,29 @@ window.zarejestruj = async () => {
 
     if (!email || !password) return alert("Wypełnij email i hasło!");
     
-    // --- TUTAJ JEST TWOJA NOWA WALIDACJA HASŁA ---
+    // --- WALIDACJA HASŁA ---
     const passRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
     if (!passRegex.test(password)) {
         return alert("Hasło nie spełnia wymogów:\n• min. 8 znaków\n• duża litera\n• liczba\n• znak specjalny");
     }
 
-        if (!zgoda) return alert("Musisz zaakceptować regulamin!");
+    if (!zgoda) return alert("Musisz zaakceptować regulamin!");
 
+    // TO JEST KLUCZOWE: Pobranie tokena z okienka Turnstile
     const token = turnstile.getResponse();
     if (!token) return alert("Potwierdź, że nie jesteś robotem!");
 
     const { data, error } = await baza.auth.signUp({ 
         email, 
         password,
-        options: { captchaToken: token }
+        options: { captchaToken: token } // Tu przekazujemy token do bazy
     });
     if (error) {
         alert("Błąd: " + error.message);
-        turnstile.reset();
+        turnstile.reset(); // Resetuje okienko, żeby bot nie mógł próbować w pętli
     }
     else {
-        alert("Konto utworzone! Wysłaliśmy link aktywacyjny na Twój e-mail. Musisz go kliknąć, aby móc się zalogować.");
+        alert("Konto utworzone! Sprawdź e-mail, aby aktywować konto.");
         location.reload();
     }
 };
