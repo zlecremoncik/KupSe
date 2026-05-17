@@ -147,21 +147,25 @@ window.zarejestruj = async () => {
     const zgoda = document.getElementById('reg-zgoda-regulamin').checked;
 
     if (!email || !password) return alert("Wypełnij email i hasło!");
-    
-    // --- TUTAJ JEST TWOJA NOWA WALIDACJA HASŁA ---
     const passRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
-    if (!passRegex.test(password)) {
-        return alert("Hasło nie spełnia wymogów:\n• min. 8 znaków\n• duża litera\n• liczba\n• znak specjalny");
-    }
-
+    if (!passRegex.test(password)) return alert("Hasło nie spełnia wymogów!");
     if (!zgoda) return alert("Musisz zaakceptować regulamin!");
 
-    const { data, error } = await baza.auth.signUp({ email, password });
-    if (error) alert("Błąd: " + error.message);
-    else {
-        alert("Konto utworzone! Wysłaliśmy link aktywacyjny na Twój e-mail. Musisz go kliknąć, aby móc się zalogować.");
-        location.reload();
-    }
+    // reCAPTCHA v3
+    grecaptcha.ready(function() {
+        grecaptcha.execute('TWÓJ_KLUCZ_STRONY', {action: 'submit'}).then(async function(token) {
+            const { data, error } = await baza.auth.signUp({ 
+                email, 
+                password,
+                options: { data: { captchaToken: token } } 
+            });
+            if (error) alert("Błąd: " + error.message);
+            else {
+                alert("Konto utworzone! Sprawdź e-mail.");
+                location.reload();
+            }
+        });
+    });
 };
 
 async function sprawdzUzytkownika() {
@@ -1204,3 +1208,22 @@ window.addEventListener('popstate', function(event) {
         window.czyOkienkoOtwarte = false;
     }
 });
+window.wyslijZgloszeniePomocy = async () => {
+    const email = document.getElementById('h-email').value;
+    const tresc = document.getElementById('h-wiadomosc').value;
+
+    if(!email || !tresc) return alert("Wypełnij oba pola!");
+
+    const { error } = await baza.from('wiadomosci').insert([{
+        nadawca: email,
+        odbiorca: 'admin@kupse24.pl', // Twoja skrzynka admina
+        tresc: "Zgłoszenie POMOC: " + tresc,
+        przeczytane: false
+    }]);
+
+    if(error) alert("Błąd wysyłania: " + error.message);
+    else {
+        alert("Wiadomość została wysłana do pomocy technicznej!");
+        window.zamknijModal();
+    }
+};
