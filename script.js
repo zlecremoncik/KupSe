@@ -63,11 +63,14 @@ const SUB_DATA = {
 };
 
 const formatujDate = (d) => {
+    if (!d) return "";
     const dataObj = new Date(d);
     const dzien = String(dataObj.getDate()).padStart(2, '0');
     const miesiac = String(dataObj.getMonth() + 1).padStart(2, '0');
     const rok = dataObj.getFullYear();
-    return `${dzien}.${miesiac}.${rok}`;
+    const godzina = String(dataObj.getHours()).padStart(2, '0');
+    const minuta = String(dataObj.getMinutes()).padStart(2, '0');
+    return `${dzien}.${miesiac}.${rok} ${godzina}:${minuta}`;
 };
 
 let daneOgloszen = [];
