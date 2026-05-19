@@ -203,32 +203,29 @@ async function sprawdzUzytkownika() {
         nav.innerHTML = `
             <div style="position:relative; display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap;">
                 <span style="font-weight:800; font-size:13px; width:100%; text-align:center; margin-bottom:5px;">Witaj ${dajNazwe(user.email)}</span>
-                
                 <button onclick="window.otworzFormularzDodawania()" style="background:#111; color:white; border:none; padding:10px 15px; border-radius:10px; cursor:pointer; font-weight:bold; font-size:13px;">+ Dodaj</button>
-                
                 <div style="position:relative;">
                     <button onclick="window.toggleUserMenu(event)" style="background:var(--primary); color:white; border:none; padding:10px 15px; border-radius:10px; cursor:pointer; font-weight:800; font-size:13px; display:flex; align-items:center; gap:5px; position:relative;">
                         Moje Konto ▼
                         ${msgCount > 0 ? `<span style="position:absolute; top:-8px; right:-8px; background:red; color:white; border-radius:50%; width:22px; height:22px; min-width:22px; min-height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; border:2px solid white; font-weight:bold; flex-shrink:0; line-height:1; aspect-ratio:1/1;">${msgCount}</span>` : ''}
                     </button>
-                    
-                                    <div id="drop-menu" style="display:none; position:absolute; top:110%; right:0; background:white; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:15px; padding:8px; z-index:2001; min-width:190px; border:1px solid #eee;">
-                    <div onclick="window.pokazMojeOgloszenia()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; display:flex; align-items:center; gap:10px; font-family: inherit;">
-                        <span style="width:20px; text-align:center;">📝</span> <span>Moje ogłoszenia</span>
-                    </div>
-                    <div onclick="window.pokazSkrzynke()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; display:flex; align-items:center; gap:10px; font-family: inherit;">
-                        <span style="width:20px; text-align:center;">✉️</span> <span>Wiadomości ${msgCount > 0 ? `<b style="color:red;">(${msgCount})</b>` : ''}</span>
-                    </div>
-                    <div onclick="window.pokazUlubione()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; display:flex; align-items:center; gap:10px; font-family: inherit;">
-                        <span style="width:20px; text-align:center;">❤️</span> <span>Ulubione (${mojeUlubione.length})</span>
-                    </div>
-                    <div onclick="window.wyloguj()" style="padding:12px; cursor:pointer; color:red; font-weight:bold; font-size:14px; display:flex; align-items:center; gap:10px; font-family: inherit;">
-                        <span style="width:20px; text-align:center;">🚪</span> <span>Wyloguj</span>
+                    <div id="drop-menu" style="display:none; position:absolute; top:110%; right:0; background:white; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:15px; padding:8px; z-index:2001; min-width:190px; border:1px solid #eee;">
+                        <div onclick="window.pokazMojeOgloszenia()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; display:flex; align-items:center; gap:10px;">📝 Moje ogłoszenia</div>
+                        <div onclick="window.pokazSkrzynke()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; display:flex; align-items:center; gap:10px;">✉️ Wiadomości</div>
+                        <div onclick="window.wyloguj()" style="padding:12px; cursor:pointer; color:red; font-weight:bold;">🚪 Wyloguj</div>
                     </div>
                 </div>
             </div>`;
     } else {
-        if (authBox) authBox.style.display = 'block';
+        if (authBox) {
+            authBox.style.display = 'block';
+            // BUDZIMY BOTA: Sprawdzamy czy okienko już jest, jeśli nie - rysujemy je
+            setTimeout(() => {
+                if (window.turnstile && document.getElementById('bot-login').innerHTML === "") {
+                    turnstile.render('#bot-login', { sitekey: '0x4AAAAAAADREjp5OyDwBnHMN' });
+                }
+            }, 100);
+        }
         nav.innerHTML = `<button onclick="document.getElementById('auth-box').scrollIntoView({behavior:'smooth'})" class="btn-account">Zaloguj się</button>`;
     }
 }
