@@ -135,9 +135,23 @@ window.szukaj = async () => {
 window.loguj = async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('pass').value;
-    const { data, error } = await baza.auth.signInWithPassword({ email, password });
-    if (error) alert("Błąd: " + error.message);
-    else location.reload();
+
+    // Pobieramy dowód, że kliknięto w okienko "Nie jestem botem"
+    const token = turnstile.getResponse();
+    if (!token) return alert("Potwierdź, że nie jesteś robotem!");
+
+    const { data, error } = await baza.auth.signInWithPassword({ 
+        email, 
+        password,
+        options: { captchaToken: token } // Wysyłamy ten dowód do systemu
+    });
+
+    if (error) {
+        alert("Błąd: " + error.message);
+        turnstile.reset(); // Jeśli hasło było złe, odświeżamy okienko bota
+    } else {
+        location.reload();
+    }
 };
 
 window.zarejestruj = async () => {
