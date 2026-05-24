@@ -137,8 +137,17 @@ window.loguj = async () => {
     const password = document.getElementById('pass').value;
 
     // Pobieramy dowód, że kliknięto w okienko "Nie jestem botem"
-    const token = turnstile.getResponse();
-    if (!token) return alert("Potwierdź, że nie jesteś robotem!");
+    const widgetIframe = document.querySelector('#bot-login iframe');
+
+if (!widgetIframe) {
+    return alert("Captcha się nie załadowała.");
+}
+
+const token = turnstile.getResponse();
+
+if (!token) {
+    return alert("Kliknij captcha jeszcze raz.");
+}
 
     const { data, error } = await baza.auth.signInWithPassword({ 
         email, 
@@ -170,8 +179,17 @@ window.zarejestruj = async () => {
     if (!zgoda) return alert("Musisz zaakceptować regulamin!");
 
     // TO JEST KLUCZOWE: Pobranie tokena z okienka Turnstile
-    const token = turnstile.getResponse();
-    if (!token) return alert("Potwierdź, że nie jesteś robotem!");
+    const widgetIframe = document.querySelector('#turnstile-container iframe');
+
+if (!widgetIframe) {
+    return alert("Captcha się nie załadowała.");
+}
+
+const token = turnstile.getResponse();
+
+if (!token) {
+    return alert("Kliknij captcha jeszcze raz.");
+}
 
     const { data, error } = await baza.auth.signUp({ 
         email, 
