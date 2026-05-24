@@ -220,10 +220,11 @@ async function sprawdzUzytkownika() {
                         Moje Konto ▼
                         ${msgCount > 0 ? `<span id="msg-badge" style="position:absolute; top:-8px; right:-8px; background:red; color:white; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; border:2px solid white; font-weight:bold;">${msgCount}</span>` : ''}
                     </button>
-                    <div id="drop-menu" style="display:none; position:absolute; top:110%; right:0; background:white; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:15px; padding:8px; z-index:2001; min-width:190px; border:1px solid #eee;">
+                                        <div id="drop-menu" style="display:none; position:absolute; top:110%; right:0; background:white; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:15px; padding:8px; z-index:2001; min-width:190px; border:1px solid #eee;">
                         <div onclick="window.pokazMojeOgloszenia()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px;">📝 Moje ogłoszenia</div>
                         <div onclick="window.pokazSkrzynke()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px;">✉️ Wiadomości</div>
-                        <div onclick="window.wyloguj()" style="padding:12px; cursor:pointer; color:red; font-weight:bold;">🚪 Wyloguj</div>
+                        <div onclick="window.pokazUlubione()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px;">❤️ Ulubione</div>
+                        <div onclick="window.wyloguj()" style="padding:12px; cursor:pointer; color:red; font-weight:bold; font-size:14px;">🚪 Wyloguj</div>
                     </div>
                 </div>
             </div>`;
@@ -284,8 +285,8 @@ window.pokazSkrzynke = async () => {
     const { data: msgs } = await baza.from('wiadomosci').select('*').or(`nadawca.eq.${user.email},odbiorca.eq.${user.email}`).order('created_at', { ascending: false });
     const rozmowcy = [...new Set(msgs.map(m => m.nadawca === user.email ? m.odbiorca : m.nadawca))];
     
-    const mb = document.querySelector('.modal-box');
-    if(mb) mb.style.maxWidth = "450px"; 
+        const mb = document.querySelector('.modal-box');
+    if(mb) mb.style.maxWidth = "350px"; 
 
     let html = `<button class="close-btn" onclick="window.wrocDoOgloszeniaLubZamknij()">&times;</button>
                 <h2 style="text-align:center; margin-bottom:20px;">Wiadomości</h2>
@@ -318,8 +319,8 @@ window.otworzChat = async (zKim) => {
     await sprawdzUzytkownika(); // TO ODŚWIEŻA LICZNIK NATYCHMIAST
     const { data: msg } = await baza.from('wiadomosci').select('*').or(`and(nadawca.eq.${user.email},odbiorca.eq.${zKim}),and(nadawca.eq.${zKim},odbiorca.eq.${user.email})`).order('created_at', { ascending: true });
     
-    const mb = document.querySelector('.modal-box');
-    if(mb) mb.style.maxWidth = "400px";
+        const mb = document.querySelector('.modal-box');
+    if(mb) mb.style.maxWidth = "350px";
 
         document.getElementById('view-content').innerHTML = `
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:15px;">
@@ -1143,6 +1144,9 @@ window.edytujOgloszenie = (id) => {
     const o = daneOgloszen.find(x => x.id === id);
     if (!o) return;
     
+    const mb = document.querySelector('#modal-form .modal-box');
+    if(mb) mb.style.maxWidth = "600px";
+    
     document.getElementById('modal-view').style.display = 'none';
     document.getElementById('modal-form').style.display = 'flex';
     document.getElementById('form-title').innerText = "Edytuj ogłoszenie";
@@ -1227,6 +1231,8 @@ window.edytujOgloszenie = (id) => {
     };
 };
 window.otworzFormularzDodawania = () => {
+    const mb = document.querySelector('#modal-form .modal-box');
+    if(mb) mb.style.maxWidth = "600px";
     document.getElementById('modal-form').style.display = 'flex';
     document.getElementById('form-title').innerText = "Dodaj nowe ogłoszenie";
     document.getElementById('form-dodaj').reset();
