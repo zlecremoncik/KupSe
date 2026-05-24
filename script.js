@@ -220,17 +220,17 @@ async function sprawdzUzytkownika() {
                         Moje Konto ▼
                         ${msgCount > 0 ? `<span id="msg-badge" style="position:absolute; top:-8px; right:-8px; background:red; color:white; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; border:2px solid white; font-weight:bold;">${msgCount}</span>` : ''}
                     </button>
-                                                            <div id="drop-menu" style="display:none; position:absolute; top:110%; right:0; background:white; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:15px; padding:8px; z-index:2001; min-width:210px; border:1px solid #eee;">
-                        <div onclick="window.pokazMojeOgloszenia()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px;">📝 Moje ogłoszenia</div>
-                        <div onclick="window.pokazSkrzynke()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; display:flex; justify-content:space-between;">
-                            <span>✉️ Wiadomości</span>
-                            ${msgCount > 0 ? `<span style="background:red; color:white; border-radius:10px; padding:2px 8px; font-size:10px;">${msgCount}</span>` : ''}
+                                                                                                    <div id="drop-menu" style="display:none; position:absolute; top:110%; left:50%; transform:translateX(-50%); background:white; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:15px; padding:5px; z-index:2001; min-width:210px; border:1px solid #eee;">
+                        <div onclick="window.pokazMojeOgloszenia()" style="padding:12px 15px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;"><span>📝</span> Moje ogłoszenia</div>
+                        <div onclick="window.pokazSkrzynke()" style="padding:12px 15px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;">
+                            <span>✉️</span> Wiadomości 
+                            ${msgCount > 0 ? `<span style="background:red; color:white; border-radius:10px; padding:2px 8px; font-size:10px; margin-left:auto;">${msgCount}</span>` : ''}
                         </div>
-                        <div onclick="window.pokazUlubione()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; display:flex; justify-content:space-between;">
-                            <span>❤️ Ulubione</span>
-                            ${mojeUlubione.length > 0 ? `<span style="background:#ddd; color:#333; border-radius:10px; padding:2px 8px; font-size:10px;">${mojeUlubione.length}</span>` : ''}
+                        <div onclick="window.pokazUlubione()" style="padding:12px 15px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;">
+                            <span>❤️</span> Ulubione
+                            ${mojeUlubione.length > 0 ? `<span style="background:#eee; color:#333; border-radius:10px; padding:2px 8px; font-size:10px; margin-left:auto;">${mojeUlubione.length}</span>` : ''}
                         </div>
-                        <div onclick="window.wyloguj()" style="padding:12px; cursor:pointer; color:red; font-weight:bold; font-size:14px;">🚪 Wyloguj</div>
+                        <div onclick="window.wyloguj()" style="padding:12px 15px; cursor:pointer; color:red; font-weight:bold; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;"><span>🚪</span> Wyloguj</div>
                     </div>
                 </div>
             </div>`;
