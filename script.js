@@ -515,22 +515,22 @@ window.otworzFullFoto = () => {
     if (!lb) {
         lb = document.createElement('div');
         lb.id = 'lightbox-box';
-        lb.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:30000; display:none; align-items:center; justify-content:center; user-select:none; overflow:auto;";
+        lb.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:30000; display:none; align-items:center; justify-content:center; user-select:none; overflow:hidden;";
         document.body.appendChild(lb);
     }
     window.isZoomed = false; 
     lb.innerHTML = `
         <button onclick="document.getElementById('lightbox-box').style.display='none'" 
-                style="position:absolute; top:25px; right:25px; background:white; border:none; width:45px; height:45px; border-radius:50%; font-size:28px; cursor:pointer; z-index:30005; display:flex; align-items:center; justify-content:center;">&times;</button>
+                style="position:absolute; top:20px; right:20px; background:white; border:none; width:45px; height:45px; border-radius:50%; font-size:30px; cursor:pointer; z-index:30010; display:flex; align-items:center; justify-content:center; font-weight:bold; color:black;">&times;</button>
         <button id="lb-prev" onclick="window.navFullFoto(-1)" 
-                style="position:absolute; left:20px; background:rgba(255,255,255,0.15); color:white; border:none; padding:15px; cursor:pointer; font-size:30px; border-radius:10px; z-index:30004;">❮</button>
-        <div id="lb-img-container" style="transition: 0.3s; display:flex; align-items:center; justify-content:center;">
+                style="position:absolute; left:10px; background:rgba(0,0,0,0.5); color:white; border:none; width:50px; height:50px; cursor:pointer; font-size:30px; border-radius:50%; z-index:30005; display:flex; align-items:center; justify-content:center;">❮</button>
+        <div id="lb-img-container" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:auto;">
             <img id="lb-img" src="${window.aktualneFotki[window.aktualneZdjecieIndex]}" 
-                 style="max-width:95vw; max-height:95vh; object-fit:contain; transition: transform 0.3s; cursor: zoom-in;"
+                 style="max-width:100%; max-height:100%; object-fit:contain; transition: transform 0.3s ease; cursor: zoom-in;"
                  onclick="window.toggleZoom(this)">
         </div>
         <button id="lb-next" onclick="window.navFullFoto(1)" 
-                style="position:absolute; right:20px; background:rgba(255,255,255,0.15); color:white; border:none; padding:15px; cursor:pointer; font-size:30px; border-radius:10px; z-index:30004;">❯</button>
+                style="position:absolute; right:10px; background:rgba(0,0,0,0.5); color:white; border:none; width:50px; height:50px; cursor:pointer; font-size:30px; border-radius:50%; z-index:30005; display:flex; align-items:center; justify-content:center;">❯</button>
     `;
     lb.style.display = 'flex';
 };
@@ -540,15 +540,15 @@ window.toggleZoom = (img) => {
     const prev = document.getElementById('lb-prev');
     const next = document.getElementById('lb-next');
     if (window.isZoomed) {
-        img.style.transform = "scale(2)";
+        img.style.transform = "scale(2.5)"; 
         img.style.cursor = "zoom-out";
         if(prev) prev.style.display = 'none';
         if(next) next.style.display = 'none';
     } else {
         img.style.transform = "scale(1)";
         img.style.cursor = "zoom-in";
-        if(prev) prev.style.display = 'block';
-        if(next) next.style.display = 'block';
+        if(prev) prev.style.display = 'flex';
+        if(next) next.style.display = 'flex';
     }
 };
 
@@ -559,8 +559,8 @@ window.navFullFoto = (kierunek) => {
     if(img) { img.style.transform = "scale(1)"; img.style.cursor = "zoom-in"; }
     const prev = document.getElementById('lb-prev');
     const next = document.getElementById('lb-next');
-    if(prev) prev.style.display = 'block';
-    if(next) next.style.display = 'block';
+    if(prev) prev.style.display = 'flex';
+    if(next) next.style.display = 'flex';
     window.aktualneZdjecieIndex += kierunek;
     if (window.aktualneZdjecieIndex >= window.aktualneFotki.length) window.aktualneZdjecieIndex = 0;
     if (window.aktualneZdjecieIndex < 0) window.aktualneZdjecieIndex = window.aktualneFotki.length - 1;
