@@ -136,14 +136,12 @@ window.loguj = async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('pass').value;
 
-    // Pobieramy dowód, że kliknięto w okienko "Nie jestem botem"
-    const widgetIframe = document.querySelector('#bot-login iframe');
+     // Sprawdzamy czy mamy bilet wstępu od Cloudflare
+    const token = (window.turnstile) ? turnstile.getResponse() : null;
 
-if (!widgetIframe) {
-    return alert("Captcha się nie załadowała.");
-}
-
-const token = turnstile.getResponse();
+    if (!token) {
+        return alert("Proszę najpierw kliknąć w okienko weryfikacji poniżej.");
+    }
 
 if (!token) {
     return alert("Kliknij captcha jeszcze raz.");
@@ -178,14 +176,12 @@ window.zarejestruj = async () => {
 
     if (!zgoda) return alert("Musisz zaakceptować regulamin!");
 
-    // TO JEST KLUCZOWE: Pobranie tokena z okienka Turnstile
-    const widgetIframe = document.querySelector('#turnstile-container iframe');
+        // Pobranie tokena w bezpieczny sposób
+    const token = (window.turnstile) ? turnstile.getResponse() : null;
 
-if (!widgetIframe) {
-    return alert("Captcha się nie załadowała.");
-}
-
-const token = turnstile.getResponse();
+    if (!token) {
+        return alert("Proszę potwierdzić, że nie jesteś robotem.");
+    }
 
 if (!token) {
     return alert("Kliknij captcha jeszcze raz.");
