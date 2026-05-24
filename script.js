@@ -446,9 +446,12 @@ window.pokazSzczegoly = async (id) => {
 
     document.getElementById('view-content').innerHTML = `
         <!-- NOWOCZESNY PASEK GÓRNY (ROZDZIELA PRZYCISKI) -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0;">
             <div>
                 ${btnWstecz}
+                <div style="font-size:11px; color:#777; margin-top:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">
+                    ${o.kategoria} <span style="color:#ccc; margin:0 5px;">—</span> ${o.podkategoria}
+                </div>
             </div>
             <button class="close-btn" onclick="window.zamknijModal()" style="position:static; background:#f5f5f5; border:none; width:35px; height:35px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:22px; color:#333; transition: 0.3s;">
                 &times;
