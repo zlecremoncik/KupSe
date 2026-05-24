@@ -239,17 +239,21 @@ async function sprawdzUzytkownika() {
         nav.innerHTML = `<button onclick="document.getElementById('auth-box').scrollIntoView({behavior:'smooth'})" class="btn-account">Zaloguj się</button>`;
         
         // Funkcja która czeka aż Captcha będzie gotowa
-        const renderujZOpoznieniem = () => {
+                // Uparta funkcja, która będzie próbować co pół sekundy, aż do skutku
+        const renderujLogin = () => {
             if (window.turnstile) {
-                const loginBox = document.getElementById('bot-login');
-                if (loginBox && loginBox.innerHTML === "") {
-                    turnstile.render('#bot-login', { sitekey: '0x4AAAAAADVZBdOrbapzXNUP' });
+                const box = document.getElementById('bot-login');
+                if (box && box.innerHTML === "") {
+                    turnstile.render('#bot-login', { 
+                        sitekey: '0x4AAAAAADVZBdOrbapzXNUP',
+                        theme: 'light' 
+                    });
                 }
             } else {
-                setTimeout(renderujZOpoznieniem, 500); // Sprawdź ponownie za pół sekundy
+                setTimeout(renderujLogin, 500); 
             }
         };
-        renderujZOpoznieniem();
+        renderujLogin();
     }
 }
 // --- ULUBIONE (NAPRAWIONE I MNIEJSZE) ---
