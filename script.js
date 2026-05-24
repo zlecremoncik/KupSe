@@ -219,8 +219,8 @@ async function sprawdzUzytkownika() {
                     <button onclick="window.toggleUserMenu(event)" style="background:var(--primary); color:white; border:none; padding:10px 15px; border-radius:10px; cursor:pointer; font-weight:800; font-size:13px; display:flex; align-items:center; gap:5px; position:relative;">
                         Moje Konto ▼
                         ${msgCount > 0 ? `<span id="msg-badge" style="position:absolute; top:-8px; right:-8px; background:red; color:white; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; border:2px solid white; font-weight:bold;">${msgCount}</span>` : ''}
-                    </button>
-                                                                                                    <div id="drop-menu" style="display:none; position:absolute; top:110%; left:50%; transform:translateX(-50%); background:white; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:15px; padding:5px; z-index:2001; min-width:210px; border:1px solid #eee;">
+                                        </button>
+                    <div id="drop-menu" style="display:none; position:absolute; top:110%; right:0; background:white; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:15px; padding:5px; z-index:2001; min-width:210px; border:1px solid #eee;">
                         <div onclick="window.pokazMojeOgloszenia()" style="padding:12px 15px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;"><span>📝</span> Moje ogłoszenia</div>
                         <div onclick="window.pokazSkrzynke()" style="padding:12px 15px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;">
                             <span>✉️</span> Wiadomości 
@@ -515,49 +515,56 @@ window.otworzFullFoto = () => {
     if (!lb) {
         lb = document.createElement('div');
         lb.id = 'lightbox-box';
-        // Zwiększyłem z-index do 30000, żeby nic go nie przykryło
-        lb.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:30000; display:none; align-items:center; justify-content:center; user-select:none;";
+        lb.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:30000; display:none; align-items:center; justify-content:center; user-select:none; overflow:auto;";
         document.body.appendChild(lb);
     }
-    
-    // Używamy "window." przed nazwami, żeby obrazek się wczytał
+    window.isZoomed = false; 
     lb.innerHTML = `
         <button onclick="document.getElementById('lightbox-box').style.display='none'" 
-                style="position:absolute; top:25px; right:25px; background:white; border:none; width:45px; height:45px; border-radius:50%; font-size:28px; cursor:pointer; z-index:9001; display:flex; align-items:center; justify-content:center;">
-            &times;
-        </button>
-        <button onclick="window.navFullFoto(-1)" 
-                style="position:absolute; left:20px; background:rgba(255,255,255,0.15); color:white; border:none; padding:15px; cursor:pointer; font-size:30px; border-radius:10px; z-index:9002;">
-            ❮
-        </button>
-        <img id="lb-img" src="${window.aktualneFotki[window.aktualneZdjecieIndex]}" style="max-width:95%; max-height:95%; object-fit:contain;">
-        <button onclick="window.navFullFoto(1)" 
-                style="position:absolute; right:20px; background:rgba(255,255,255,0.15); color:white; border:none; padding:15px; cursor:pointer; font-size:30px; border-radius:10px; z-index:9002;">
-            ❯
-        </button>
+                style="position:absolute; top:25px; right:25px; background:white; border:none; width:45px; height:45px; border-radius:50%; font-size:28px; cursor:pointer; z-index:30005; display:flex; align-items:center; justify-content:center;">&times;</button>
+        <button id="lb-prev" onclick="window.navFullFoto(-1)" 
+                style="position:absolute; left:20px; background:rgba(255,255,255,0.15); color:white; border:none; padding:15px; cursor:pointer; font-size:30px; border-radius:10px; z-index:30004;">❮</button>
+        <div id="lb-img-container" style="transition: 0.3s; display:flex; align-items:center; justify-content:center;">
+            <img id="lb-img" src="${window.aktualneFotki[window.aktualneZdjecieIndex]}" 
+                 style="max-width:95vw; max-height:95vh; object-fit:contain; transition: transform 0.3s; cursor: zoom-in;"
+                 onclick="window.toggleZoom(this)">
+        </div>
+        <button id="lb-next" onclick="window.navFullFoto(1)" 
+                style="position:absolute; right:20px; background:rgba(255,255,255,0.15); color:white; border:none; padding:15px; cursor:pointer; font-size:30px; border-radius:10px; z-index:30004;">❯</button>
     `;
     lb.style.display = 'flex';
 };
+
+window.toggleZoom = (img) => {
+    window.isZoomed = !window.isZoomed;
+    const prev = document.getElementById('lb-prev');
+    const next = document.getElementById('lb-next');
+    if (window.isZoomed) {
+        img.style.transform = "scale(2)";
+        img.style.cursor = "zoom-out";
+        if(prev) prev.style.display = 'none';
+        if(next) next.style.display = 'none';
+    } else {
+        img.style.transform = "scale(1)";
+        img.style.cursor = "zoom-in";
+        if(prev) prev.style.display = 'block';
+        if(next) next.style.display = 'block';
+    }
+};
+
 window.navFullFoto = (kierunek) => {
-    // 1. Sprawdzamy czy mamy zdjęcia do przełączania
     if (!window.aktualneFotki || window.aktualneFotki.length <= 1) return;
-
-    // 2. Zmieniamy numer aktualnego zdjęcia
-    window.aktualneZdjecieIndex += kierunek;
-
-    // 3. Jeśli wyjdziemy poza zakres, zapętlamy (z ostatniego na pierwsze i odwrotnie)
-    if (window.aktualneZdjecieIndex >= window.aktualneFotki.length) {
-        window.aktualneZdjecieIndex = 0;
-    }
-    if (window.aktualneZdjecieIndex < 0) {
-        window.aktualneZdjecieIndex = window.aktualneFotki.length - 1;
-    }
-
-    // 4. Podmieniamy fizycznie obrazek w oknie podglądu
+    window.isZoomed = false;
     const img = document.getElementById('lb-img');
-    if (img) {
-        img.src = window.aktualneFotki[window.aktualneZdjecieIndex];
-    }
+    if(img) { img.style.transform = "scale(1)"; img.style.cursor = "zoom-in"; }
+    const prev = document.getElementById('lb-prev');
+    const next = document.getElementById('lb-next');
+    if(prev) prev.style.display = 'block';
+    if(next) next.style.display = 'block';
+    window.aktualneZdjecieIndex += kierunek;
+    if (window.aktualneZdjecieIndex >= window.aktualneFotki.length) window.aktualneZdjecieIndex = 0;
+    if (window.aktualneZdjecieIndex < 0) window.aktualneZdjecieIndex = window.aktualneFotki.length - 1;
+    if (img) img.src = window.aktualneFotki[window.aktualneZdjecieIndex];
 };
 window.udostepnijOgloszenie = (e, id) => {
     if(e) e.stopPropagation();
