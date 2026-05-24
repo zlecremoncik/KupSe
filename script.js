@@ -1251,6 +1251,20 @@ window.addEventListener('popstate', function(event) {
         document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         document.body.style.overflow = 'auto';
         document.title = "KupSe24 - Twój Portal Ogłoszeniowy";
-        window.czyOkienkoOtwarte = false;
+                window.czyOkienkoOtwarte = false;
     }
 });
+
+// Ta funkcja naprawia okienko bota - uruchamia je dokładnie w momencie kliknięcia "Zarejestruj się"
+window.pokazRejestracje = () => {
+    document.getElementById('login-view').classList.add('hidden');
+    document.getElementById('register-view').classList.remove('hidden');
+
+    if (window.turnstile) {
+        document.getElementById('turnstile-container').innerHTML = ''; // Czyścimy stare okienko
+        turnstile.render('#turnstile-container', {
+            sitekey: '0x4AAAAAAADREjp5OyDwBnHMN', // To jest Twój klucz publiczny
+            theme: 'light',
+        });
+    }
+};
