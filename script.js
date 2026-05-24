@@ -461,7 +461,11 @@ window.pokazSzczegoly = async (id) => {
                 <div style="font-size:11px; color:gray;">Dodano: ${formatujDate(o.created_at)}</div>
                 <h2 style="font-size:18px; margin:10px 0;">${o.tytul}</h2>
                 <h1 style="color:var(--primary); font-size:24px; margin:5px 0;">${o.cena} zł</h1>
-                <p style="font-size:14px;">📍 ${o.lokalizacja} | 📞 ${telefonWidok}</p>
+                                <p style="font-size:14px;">📍 ${o.lokalizacja} | 📞 ${telefonWidok}</p>
+                <div style="font-size:13px; margin-bottom:15px; color:#555; display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
+                    <span>👤 Sprzedający: <b>${dajNazwe(o.user_email)}</b></span>
+                    <a href="javascript:void(0)" onclick="window.pokazOgloszeniaUzytkownika('${o.user_email}')" style="color:var(--primary); text-decoration:none; font-weight:bold; font-size:12px;">(Wszystkie ogłoszenia użytkownika)</a>
+                </div>
                 <div style="display:flex; gap:10px; margin-top:15px; align-items:center;">
                     ${przyciskChatu}
                     <button onclick="window.udostepnijOgloszenie(event, ${o.id})" style="padding:15px; background:#f0f0f0; border:none; border-radius:10px; cursor:pointer; font-size:20px;">🔗</button>
@@ -1029,6 +1033,11 @@ window.toggleUlubione = async (e, id) => {
 window.pokazUlubione = () => {
     const ulubioneLista = daneOgloszen.filter(o => mojeUlubione.includes(o.id));
     window.pokazWynikiModal("Twoje Ulubione", ulubioneLista);
+};
+
+window.pokazOgloszeniaUzytkownika = (email) => {
+    const wyniki = daneOgloszen.filter(o => o.user_email === email);
+    window.pokazWynikiModal(`Ogłoszenia użytkownika: ${dajNazwe(email)}`, wyniki);
 };
 
 window.zamknijModal = () => {
