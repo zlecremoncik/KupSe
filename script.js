@@ -415,6 +415,7 @@ window.pokazSzczegoly = async (id) => {
     baza.from('ogloszenia').update({ wyswietlenia: o.wyswietlenia }).eq('id', id).then();
     
     window.obecneOgloszenieId = id; 
+    window.aktualneZdjecieIndex = 0; 
 
     // --- NOWOŚĆ: Budujemy ładny link ---
     const ladnyTytul = zrobLadnyTytul(o.tytul);
