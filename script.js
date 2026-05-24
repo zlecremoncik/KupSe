@@ -220,9 +220,9 @@ async function sprawdzUzytkownika() {
         if (authBox) {
             authBox.style.display = 'block';
             // BUDZIMY BOTA: Sprawdzamy czy okienko już jest, jeśli nie - rysujemy je
-            setTimeout(() => {
+                        setTimeout(() => {
                 if (window.turnstile && document.getElementById('bot-login').innerHTML === "") {
-                    turnstile.render('#bot-login', { sitekey: '0x4AAAAAAADREjp5OyDwBnHMN' });
+                    turnstile.render('#bot-login', { sitekey: '0x4AAAAAADVZBdOrbapzXNUP' });
                 }
             }, 100);
         }
@@ -1260,10 +1260,10 @@ window.pokazRejestracje = () => {
     document.getElementById('login-view').classList.add('hidden');
     document.getElementById('register-view').classList.remove('hidden');
 
-    if (window.turnstile) {
+        if (window.turnstile) {
         document.getElementById('turnstile-container').innerHTML = ''; // Czyścimy stare okienko
         turnstile.render('#turnstile-container', {
-            sitekey: '0x4AAAAAAADREjp5OyDwBnHMN', // To jest Twój klucz publiczny
+            sitekey: '0x4AAAAAADVZBdOrbapzXNUP', // To jest Twój klucz publiczny
             theme: 'light',
         });
     }
