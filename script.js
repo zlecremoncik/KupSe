@@ -225,26 +225,31 @@ async function sprawdzUzytkownika() {
                 <div style="position:relative;">
                     <button onclick="window.toggleUserMenu(event)" style="background:var(--primary); color:white; border:none; padding:10px 15px; border-radius:10px; cursor:pointer; font-weight:800; font-size:13px; display:flex; align-items:center; gap:5px; position:relative;">
                         Moje Konto ▼
-                        ${msgCount > 0 ? `<span style="position:absolute; top:-8px; right:-8px; background:red; color:white; border-radius:50%; width:22px; height:22px; min-width:22px; min-height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; border:2px solid white; font-weight:bold; flex-shrink:0; line-height:1; aspect-ratio:1/1;">${msgCount}</span>` : ''}
+                        ${msgCount > 0 ? `<span id="msg-badge" style="position:absolute; top:-8px; right:-8px; background:red; color:white; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; border:2px solid white; font-weight:bold;">${msgCount}</span>` : ''}
                     </button>
                     <div id="drop-menu" style="display:none; position:absolute; top:110%; right:0; background:white; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:15px; padding:8px; z-index:2001; min-width:190px; border:1px solid #eee;">
-                        <div onclick="window.pokazMojeOgloszenia()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; display:flex; align-items:center; gap:10px;">📝 Moje ogłoszenia</div>
-                        <div onclick="window.pokazSkrzynke()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; display:flex; align-items:center; gap:10px;">✉️ Wiadomości</div>
+                        <div onclick="window.pokazMojeOgloszenia()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px;">📝 Moje ogłoszenia</div>
+                        <div onclick="window.pokazSkrzynke()" style="padding:12px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px;">✉️ Wiadomości</div>
                         <div onclick="window.wyloguj()" style="padding:12px; cursor:pointer; color:red; font-weight:bold;">🚪 Wyloguj</div>
                     </div>
                 </div>
             </div>`;
     } else {
-        if (authBox) {
-            authBox.style.display = 'block';
-            // BUDZIMY BOTA: Sprawdzamy czy okienko już jest, jeśli nie - rysujemy je
-                        setTimeout(() => {
-                if (window.turnstile && document.getElementById('bot-login').innerHTML === "") {
+        if (authBox) authBox.style.display = 'block';
+        nav.innerHTML = `<button onclick="document.getElementById('auth-box').scrollIntoView({behavior:'smooth'})" class="btn-account">Zaloguj się</button>`;
+        
+        // Funkcja która czeka aż Captcha będzie gotowa
+        const renderujZOpoznieniem = () => {
+            if (window.turnstile) {
+                const loginBox = document.getElementById('bot-login');
+                if (loginBox && loginBox.innerHTML === "") {
                     turnstile.render('#bot-login', { sitekey: '0x4AAAAAADVZBdOrbapzXNUP' });
                 }
-            }, 100);
-        }
-        nav.innerHTML = `<button onclick="document.getElementById('auth-box').scrollIntoView({behavior:'smooth'})" class="btn-account">Zaloguj się</button>`;
+            } else {
+                setTimeout(renderujZOpoznieniem, 500); // Sprawdź ponownie za pół sekundy
+            }
+        };
+        renderujZOpoznieniem();
     }
 }
 // --- ULUBIONE (NAPRAWIONE I MNIEJSZE) ---
@@ -1278,11 +1283,19 @@ window.pokazRejestracje = () => {
     document.getElementById('login-view').classList.add('hidden');
     document.getElementById('register-view').classList.remove('hidden');
 
+    const renderujReg = () => {
         if (window.turnstile) {
-        document.getElementById('turnstile-container').innerHTML = ''; // Czyścimy stare okienko
-        turnstile.render('#turnstile-container', {
-            sitekey: '0x4AAAAAADVZBdOrbapzXNUP', // To jest Twój klucz publiczny
-            theme: 'light',
-        });
-    }
+            const container = document.getElementById('turnstile-container');
+            if (container) {
+                container.innerHTML = ''; 
+                turnstile.render('#turnstile-container', {
+                    sitekey: '0x4AAAAAADVZBdOrbapzXNUP',
+                    theme: 'light',
+                });
+            }
+        } else {
+            setTimeout(renderujReg, 500);
+        }
+    };
+    renderujReg();
 };
