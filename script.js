@@ -136,16 +136,12 @@ window.loguj = async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('pass').value;
 
-     // Sprawdzamy czy mamy bilet wstępu od Cloudflare
-    const token = (window.turnstile) ? turnstile.getResponse() : null;
+    // Sprawdzamy tylko token, nie szukamy żadnych ramek iframe!
+    const token = (window.turnstile) ? window.turnstile.getResponse() : "";
 
-    if (!token) {
-        return alert("Proszę najpierw kliknąć w okienko weryfikacji poniżej.");
+    if (!token || token === "") {
+        return alert("BŁĄD: Kliknij w okienko weryfikacji 'Nie jestem robotem'!");
     }
-
-if (!token) {
-    return alert("Kliknij captcha jeszcze raz.");
-}
 
     const { data, error } = await baza.auth.signInWithPassword({ 
         email, 
@@ -177,10 +173,11 @@ window.zarejestruj = async () => {
     if (!zgoda) return alert("Musisz zaakceptować regulamin!");
 
         // Pobranie tokena w bezpieczny sposób
-    const token = (window.turnstile) ? turnstile.getResponse() : null;
+        // Pobieramy dowód weryfikacji
+    const token = (window.turnstile) ? window.turnstile.getResponse() : "";
 
-    if (!token) {
-        return alert("Proszę potwierdzić, że nie jesteś robotem.");
+    if (!token || token === "") {
+        return alert("Musisz potwierdzić, że nie jesteś robotem!");
     }
 
 if (!token) {
