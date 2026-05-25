@@ -220,17 +220,17 @@ async function sprawdzUzytkownika() {
                         Moje Konto ▼
                         ${msgCount > 0 ? `<span id="msg-badge" style="position:absolute; top:-8px; right:-8px; background:red; color:white; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; border:2px solid white; font-weight:bold;">${msgCount}</span>` : ''}
                                         </button>
-                    <div id="drop-menu" style="display:none; position:absolute; top:110%; right:0; background:white; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:15px; padding:5px; z-index:2001; min-width:210px; border:1px solid #eee;">
-                        <div onclick="window.pokazMojeOgloszenia()" style="padding:12px 15px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;"><span>📝</span> Moje ogłoszenia</div>
-                        <div onclick="window.pokazSkrzynke()" style="padding:12px 15px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;">
+                                        <div id="drop-menu" style="display:none; position:absolute; top:115%; right:0; background:white; box-shadow:0 15px 35px rgba(0,0,0,0.15); border-radius:20px; padding:8px; z-index:2001; min-width:200px; border:1px solid #f0f0f0;">
+                        <div onclick="window.pokazMojeOgloszenia()" style="padding:14px 16px; cursor:pointer; border-bottom:1px solid #f8f8f8; font-size:14px; font-weight:600; display:flex; align-items:center; gap:12px; color:#333;"><span>📝</span> Moje ogłoszenia</div>
+                        <div onclick="window.pokazSkrzynke()" style="padding:14px 16px; cursor:pointer; border-bottom:1px solid #f8f8f8; font-size:14px; font-weight:600; display:flex; align-items:center; gap:12px; color:#333;">
                             <span>✉️</span> Wiadomości 
                             ${msgCount > 0 ? `<span style="background:red; color:white; border-radius:10px; padding:2px 8px; font-size:10px; margin-left:auto;">${msgCount}</span>` : ''}
                         </div>
-                        <div onclick="window.pokazUlubione()" style="padding:12px 15px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;">
+                        <div onclick="window.pokazUlubione()" style="padding:14px 16px; cursor:pointer; border-bottom:1px solid #f8f8f8; font-size:14px; font-weight:600; display:flex; align-items:center; gap:12px; color:#333;">
                             <span>❤️</span> Ulubione
                             ${mojeUlubione.length > 0 ? `<span style="background:#eee; color:#333; border-radius:10px; padding:2px 8px; font-size:10px; margin-left:auto;">${mojeUlubione.length}</span>` : ''}
                         </div>
-                        <div onclick="window.wyloguj()" style="padding:12px 15px; cursor:pointer; color:red; font-weight:bold; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;"><span>🚪</span> Wyloguj</div>
+                        <div onclick="window.wyloguj()" style="padding:14px 16px; cursor:pointer; color:#e11d48; font-weight:800; font-size:14px; display:flex; align-items:center; gap:12px;"><span>🚪</span> Wyloguj</div>
                     </div>
                 </div>
             </div>`;
@@ -240,14 +240,18 @@ async function sprawdzUzytkownika() {
         
         // Funkcja która czeka aż Captcha będzie gotowa
                 // Uparta funkcja, która będzie próbować co pół sekundy, aż do skutku
-                const renderujLogin = () => {
+                        const renderujLogin = () => {
             if (window.turnstile) {
                 const box = document.getElementById('bot-login');
                 if (box && box.innerHTML === "") {
+                    // Dodajemy styl wyśrodkowania bezpośrednio do kontenera
+                    box.style.display = "flex";
+                    box.style.justifyContent = "center";
+                    box.style.margin = "15px 0";
                     turnstile.render('#bot-login', { 
                         sitekey: '0x4AAAAAADVZBdOrbapzXNUP',
                         theme: 'light',
-                        size: 'compact' 
+                        size: 'normal' // zmieniamy na normal, żeby wypełniło szerokość formularza lepiej
                     });
                 }
             } else {
@@ -1326,15 +1330,18 @@ window.pokazRejestracje = () => {
     document.getElementById('login-view').classList.add('hidden');
     document.getElementById('register-view').classList.remove('hidden');
 
-        const renderujReg = () => {
+            const renderujReg = () => {
         if (window.turnstile) {
             const container = document.getElementById('turnstile-container');
             if (container) {
                 container.innerHTML = ''; 
+                container.style.display = "flex";
+                container.style.justifyContent = "center";
+                container.style.margin = "15px 0";
                 turnstile.render('#turnstile-container', {
                     sitekey: '0x4AAAAAADVZBdOrbapzXNUP',
                     theme: 'light',
-                    size: 'compact'
+                    size: 'normal'
                 });
             }
         } else {
