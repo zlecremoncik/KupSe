@@ -555,8 +555,12 @@ window.otworzFullFoto = () => {
         document.body.appendChild(lb);
     }
     window.isZoomed = false; 
+
+    // DODAJEMY TO: Informujemy przeglądarkę, że otworzyliśmy zdjęcie
+    window.history.pushState({view: 'lightbox'}, '');
+
     lb.innerHTML = `
-        <button onclick="document.getElementById('lightbox-box').style.display='none'" 
+        <button onclick="window.zamknijLightbox()" 
                 style="position:absolute; top:20px; right:20px; background:white; border:none; width:45px; height:45px; border-radius:50%; font-size:30px; cursor:pointer; z-index:30010; display:flex; align-items:center; justify-content:center; font-weight:bold; color:black;">&times;</button>
         <button id="lb-prev" onclick="window.navFullFoto(-1)" 
                 style="position:absolute; left:10px; background:rgba(0,0,0,0.5); color:white; border:none; width:50px; height:50px; cursor:pointer; font-size:30px; border-radius:50%; z-index:30005; display:flex; align-items:center; justify-content:center;">❮</button>
@@ -569,6 +573,18 @@ window.otworzFullFoto = () => {
                 style="position:absolute; right:10px; background:rgba(0,0,0,0.5); color:white; border:none; width:50px; height:50px; cursor:pointer; font-size:30px; border-radius:50%; z-index:30005; display:flex; align-items:center; justify-content:center;">❯</button>
     `;
     lb.style.display = 'flex';
+};
+
+// DODAJEMY TĘ FUNKCJĘ:
+window.zamknijLightbox = () => {
+    const lb = document.getElementById('lightbox-box');
+    if (lb && lb.style.display === 'flex') {
+        lb.style.display = 'none';
+        // Jeśli zamknęliśmy przyciskiem X, musimy usunąć ślad z historii
+        if (window.history.state && window.history.state.view === 'lightbox') {
+            window.history.back();
+        }
+    }
 };
 
 window.toggleZoom = (img) => {
@@ -1327,19 +1343,29 @@ window.toggleMobileFilters = () => {
 };
 // Specjalny kod dla telefonów: Przycisk "Wstecz" zamyka ogłoszenie
 window.addEventListener('popstate', function(event) {
+    const lb = document.getElementById('lightbox-box');
     const modalView = document.getElementById('modal-view');
     const modalForm = document.getElementById('modal-form');
-    
+
+    // 1. Jeśli otwarte jest DUŻE ZDJĘCIE - zamknij tylko zdjęcie
+    if (lb && lb.style.display === 'flex') {
+        lb.style.display = 'none';
+        return; // Zatrzymujemy cofanie tutaj
+    }
+
+    // 2. Jeśli otwarte jest ogłoszenie lub formularz - zamknij je
     const czyWidacPodglad = modalView && modalView.style.display === 'flex';
     const czyWidacFormularz = modalForm && modalForm.style.display === 'flex';
 
-    // Jeśli użytkownik cofa, a okno jest otwarte - po prostu je zamykamy
     if (czyWidacPodglad || czyWidacFormularz) {
-        // Czyścimy wszystko bez dodawania nowej historii
         document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         document.body.style.overflow = 'auto';
         document.title = "KupSe24 - Twój Portal Ogłoszeniowy";
-                window.czyOkienkoOtwarte = false;
+        window.czyOkienkoOtwarte = false;
+        
+        // Czyścimy adres URL z ?id=...
+        const czystyURL = window.location.pathname;
+        window.history.replaceState({}, '', czystyURL);
     }
 });
 
