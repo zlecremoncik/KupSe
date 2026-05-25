@@ -220,17 +220,17 @@ async function sprawdzUzytkownika() {
                         Moje Konto ▼
                         ${msgCount > 0 ? `<span id="msg-badge" style="position:absolute; top:-8px; right:-8px; background:red; color:white; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; border:2px solid white; font-weight:bold;">${msgCount}</span>` : ''}
                                         </button>
-                                        <div id="drop-menu" style="display:none; position:absolute; top:115%; right:0; background:white; box-shadow:0 15px 35px rgba(0,0,0,0.15); border-radius:20px; padding:8px; z-index:2001; min-width:200px; border:1px solid #f0f0f0;">
-                        <div onclick="window.pokazMojeOgloszenia()" style="padding:14px 16px; cursor:pointer; border-bottom:1px solid #f8f8f8; font-size:14px; font-weight:600; display:flex; align-items:center; gap:12px; color:#333;"><span>📝</span> Moje ogłoszenia</div>
-                        <div onclick="window.pokazSkrzynke()" style="padding:14px 16px; cursor:pointer; border-bottom:1px solid #f8f8f8; font-size:14px; font-weight:600; display:flex; align-items:center; gap:12px; color:#333;">
+                    <div id="drop-menu" style="display:none; position:absolute; top:110%; right:0; background:white; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:15px; padding:5px; z-index:2001; min-width:210px; border:1px solid #eee;">
+                        <div onclick="window.pokazMojeOgloszenia()" style="padding:12px 15px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;"><span>📝</span> Moje ogłoszenia</div>
+                        <div onclick="window.pokazSkrzynke()" style="padding:12px 15px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;">
                             <span>✉️</span> Wiadomości 
                             ${msgCount > 0 ? `<span style="background:red; color:white; border-radius:10px; padding:2px 8px; font-size:10px; margin-left:auto;">${msgCount}</span>` : ''}
                         </div>
-                        <div onclick="window.pokazUlubione()" style="padding:14px 16px; cursor:pointer; border-bottom:1px solid #f8f8f8; font-size:14px; font-weight:600; display:flex; align-items:center; gap:12px; color:#333;">
+                        <div onclick="window.pokazUlubione()" style="padding:12px 15px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;">
                             <span>❤️</span> Ulubione
                             ${mojeUlubione.length > 0 ? `<span style="background:#eee; color:#333; border-radius:10px; padding:2px 8px; font-size:10px; margin-left:auto;">${mojeUlubione.length}</span>` : ''}
                         </div>
-                        <div onclick="window.wyloguj()" style="padding:14px 16px; cursor:pointer; color:#e11d48; font-weight:800; font-size:14px; display:flex; align-items:center; gap:12px;"><span>🚪</span> Wyloguj</div>
+                        <div onclick="window.wyloguj()" style="padding:12px 15px; cursor:pointer; color:red; font-weight:bold; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;"><span>🚪</span> Wyloguj</div>
                     </div>
                 </div>
             </div>`;
@@ -240,22 +240,17 @@ async function sprawdzUzytkownika() {
         
         // Funkcja która czeka aż Captcha będzie gotowa
                 // Uparta funkcja, która będzie próbować co pół sekundy, aż do skutku
-                        const renderujLogin = () => {
+        const renderujLogin = () => {
             if (window.turnstile) {
                 const box = document.getElementById('bot-login');
                 if (box && box.innerHTML === "") {
-                    // Dodajemy styl wyśrodkowania bezpośrednio do kontenera
-                    box.style.display = "flex";
-                    box.style.justifyContent = "center";
-                    box.style.margin = "15px 0";
                     turnstile.render('#bot-login', { 
                         sitekey: '0x4AAAAAADVZBdOrbapzXNUP',
-                        theme: 'light',
-                        size: 'normal' // zmieniamy na normal, żeby wypełniło szerokość formularza lepiej
+                        theme: 'light' 
                     });
                 }
             } else {
-                setTimeout(renderujLogin, 100); 
+                setTimeout(renderujLogin, 500); 
             }
         };
         renderujLogin();
@@ -520,50 +515,37 @@ window.otworzFullFoto = () => {
     if (!lb) {
         lb = document.createElement('div');
         lb.id = 'lightbox-box';
-        // overflow: auto pozwala na przewijanie powiększonego zdjęcia
-        lb.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:30000; display:none; flex-direction:column; align-items:center; justify-content:center; user-select:none; overflow:auto;";
+        lb.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:30000; display:none; align-items:center; justify-content:center; user-select:none; overflow:hidden;";
         document.body.appendChild(lb);
     }
     window.isZoomed = false; 
     lb.innerHTML = `
         <button onclick="document.getElementById('lightbox-box').style.display='none'" 
-                style="position:fixed; top:20px; right:20px; background:white; border:none; width:45px; height:45px; border-radius:50%; font-size:30px; cursor:pointer; z-index:30010; display:flex; align-items:center; justify-content:center; font-weight:bold; color:black;">&times;</button>
+                style="position:absolute; top:20px; right:20px; background:white; border:none; width:45px; height:45px; border-radius:50%; font-size:30px; cursor:pointer; z-index:30010; display:flex; align-items:center; justify-content:center; font-weight:bold; color:black;">&times;</button>
         <button id="lb-prev" onclick="window.navFullFoto(-1)" 
-                style="position:fixed; left:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; width:50px; height:50px; cursor:pointer; font-size:30px; border-radius:50%; z-index:30005; display:flex; align-items:center; justify-content:center;">❮</button>
-        <div id="lb-wrap" style="display:flex; align-items:center; justify-content:center; min-width:100%; min-height:100%;">
+                style="position:absolute; left:10px; background:rgba(0,0,0,0.5); color:white; border:none; width:50px; height:50px; cursor:pointer; font-size:30px; border-radius:50%; z-index:30005; display:flex; align-items:center; justify-content:center;">❮</button>
+        <div id="lb-img-container" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:auto;">
             <img id="lb-img" src="${window.aktualneFotki[window.aktualneZdjecieIndex]}" 
-                 style="max-width:95vw; max-height:95vh; object-fit:contain; transition: all 0.3s ease; cursor: zoom-in;"
+                 style="max-width:100%; max-height:100%; object-fit:contain; transition: transform 0.3s ease; cursor: zoom-in;"
                  onclick="window.toggleZoom(this)">
         </div>
         <button id="lb-next" onclick="window.navFullFoto(1)" 
-                style="position:fixed; right:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; width:50px; height:50px; cursor:pointer; font-size:30px; border-radius:50%; z-index:30005; display:flex; align-items:center; justify-content:center;">❯</button>
+                style="position:absolute; right:10px; background:rgba(0,0,0,0.5); color:white; border:none; width:50px; height:50px; cursor:pointer; font-size:30px; border-radius:50%; z-index:30005; display:flex; align-items:center; justify-content:center;">❯</button>
     `;
     lb.style.display = 'flex';
 };
 
 window.toggleZoom = (img) => {
     window.isZoomed = !window.isZoomed;
-    const lb = document.getElementById('lightbox-box');
     const prev = document.getElementById('lb-prev');
     const next = document.getElementById('lb-next');
-
     if (window.isZoomed) {
-        // Zamiast scale, zmieniamy szerokość na 200% ekranu - to pozwala przewijać w każdą stronę
-        img.style.width = "200vw";
-        img.style.maxWidth = "none";
-        img.style.maxHeight = "none";
+        img.style.transform = "scale(2.5)"; 
         img.style.cursor = "zoom-out";
         if(prev) prev.style.display = 'none';
         if(next) next.style.display = 'none';
-        // Centrujemy widok po powiększeniu
-        setTimeout(() => {
-            lb.scrollLeft = (img.offsetWidth - lb.clientWidth) / 2;
-            lb.scrollTop = (img.offsetHeight - lb.clientHeight) / 2;
-        }, 50);
     } else {
-        img.style.width = "";
-        img.style.maxWidth = "95vw";
-        img.style.maxHeight = "95vh";
+        img.style.transform = "scale(1)";
         img.style.cursor = "zoom-in";
         if(prev) prev.style.display = 'flex';
         if(next) next.style.display = 'flex';
@@ -1330,22 +1312,18 @@ window.pokazRejestracje = () => {
     document.getElementById('login-view').classList.add('hidden');
     document.getElementById('register-view').classList.remove('hidden');
 
-            const renderujReg = () => {
+    const renderujReg = () => {
         if (window.turnstile) {
             const container = document.getElementById('turnstile-container');
             if (container) {
                 container.innerHTML = ''; 
-                container.style.display = "flex";
-                container.style.justifyContent = "center";
-                container.style.margin = "15px 0";
                 turnstile.render('#turnstile-container', {
                     sitekey: '0x4AAAAAADVZBdOrbapzXNUP',
                     theme: 'light',
-                    size: 'normal'
                 });
             }
         } else {
-            setTimeout(renderujReg, 100);
+            setTimeout(renderujReg, 500);
         }
     };
     renderujReg();
