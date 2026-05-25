@@ -240,17 +240,18 @@ async function sprawdzUzytkownika() {
         
         // Funkcja która czeka aż Captcha będzie gotowa
                 // Uparta funkcja, która będzie próbować co pół sekundy, aż do skutku
-        const renderujLogin = () => {
+                const renderujLogin = () => {
             if (window.turnstile) {
                 const box = document.getElementById('bot-login');
                 if (box && box.innerHTML === "") {
                     turnstile.render('#bot-login', { 
                         sitekey: '0x4AAAAAADVZBdOrbapzXNUP',
-                        theme: 'light' 
+                        theme: 'light',
+                        size: 'compact' 
                     });
                 }
             } else {
-                setTimeout(renderujLogin, 500); 
+                setTimeout(renderujLogin, 100); 
             }
         };
         renderujLogin();
@@ -515,37 +516,50 @@ window.otworzFullFoto = () => {
     if (!lb) {
         lb = document.createElement('div');
         lb.id = 'lightbox-box';
-        lb.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:30000; display:none; align-items:center; justify-content:center; user-select:none; overflow:hidden;";
+        // overflow: auto pozwala na przewijanie powiększonego zdjęcia
+        lb.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:30000; display:none; flex-direction:column; align-items:center; justify-content:center; user-select:none; overflow:auto;";
         document.body.appendChild(lb);
     }
     window.isZoomed = false; 
     lb.innerHTML = `
         <button onclick="document.getElementById('lightbox-box').style.display='none'" 
-                style="position:absolute; top:20px; right:20px; background:white; border:none; width:45px; height:45px; border-radius:50%; font-size:30px; cursor:pointer; z-index:30010; display:flex; align-items:center; justify-content:center; font-weight:bold; color:black;">&times;</button>
+                style="position:fixed; top:20px; right:20px; background:white; border:none; width:45px; height:45px; border-radius:50%; font-size:30px; cursor:pointer; z-index:30010; display:flex; align-items:center; justify-content:center; font-weight:bold; color:black;">&times;</button>
         <button id="lb-prev" onclick="window.navFullFoto(-1)" 
-                style="position:absolute; left:10px; background:rgba(0,0,0,0.5); color:white; border:none; width:50px; height:50px; cursor:pointer; font-size:30px; border-radius:50%; z-index:30005; display:flex; align-items:center; justify-content:center;">❮</button>
-        <div id="lb-img-container" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:auto;">
+                style="position:fixed; left:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; width:50px; height:50px; cursor:pointer; font-size:30px; border-radius:50%; z-index:30005; display:flex; align-items:center; justify-content:center;">❮</button>
+        <div id="lb-wrap" style="display:flex; align-items:center; justify-content:center; min-width:100%; min-height:100%;">
             <img id="lb-img" src="${window.aktualneFotki[window.aktualneZdjecieIndex]}" 
-                 style="max-width:100%; max-height:100%; object-fit:contain; transition: transform 0.3s ease; cursor: zoom-in;"
+                 style="max-width:95vw; max-height:95vh; object-fit:contain; transition: all 0.3s ease; cursor: zoom-in;"
                  onclick="window.toggleZoom(this)">
         </div>
         <button id="lb-next" onclick="window.navFullFoto(1)" 
-                style="position:absolute; right:10px; background:rgba(0,0,0,0.5); color:white; border:none; width:50px; height:50px; cursor:pointer; font-size:30px; border-radius:50%; z-index:30005; display:flex; align-items:center; justify-content:center;">❯</button>
+                style="position:fixed; right:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; width:50px; height:50px; cursor:pointer; font-size:30px; border-radius:50%; z-index:30005; display:flex; align-items:center; justify-content:center;">❯</button>
     `;
     lb.style.display = 'flex';
 };
 
 window.toggleZoom = (img) => {
     window.isZoomed = !window.isZoomed;
+    const lb = document.getElementById('lightbox-box');
     const prev = document.getElementById('lb-prev');
     const next = document.getElementById('lb-next');
+
     if (window.isZoomed) {
-        img.style.transform = "scale(2.5)"; 
+        // Zamiast scale, zmieniamy szerokość na 200% ekranu - to pozwala przewijać w każdą stronę
+        img.style.width = "200vw";
+        img.style.maxWidth = "none";
+        img.style.maxHeight = "none";
         img.style.cursor = "zoom-out";
         if(prev) prev.style.display = 'none';
         if(next) next.style.display = 'none';
+        // Centrujemy widok po powiększeniu
+        setTimeout(() => {
+            lb.scrollLeft = (img.offsetWidth - lb.clientWidth) / 2;
+            lb.scrollTop = (img.offsetHeight - lb.clientHeight) / 2;
+        }, 50);
     } else {
-        img.style.transform = "scale(1)";
+        img.style.width = "";
+        img.style.maxWidth = "95vw";
+        img.style.maxHeight = "95vh";
         img.style.cursor = "zoom-in";
         if(prev) prev.style.display = 'flex';
         if(next) next.style.display = 'flex';
@@ -1312,7 +1326,7 @@ window.pokazRejestracje = () => {
     document.getElementById('login-view').classList.add('hidden');
     document.getElementById('register-view').classList.remove('hidden');
 
-    const renderujReg = () => {
+        const renderujReg = () => {
         if (window.turnstile) {
             const container = document.getElementById('turnstile-container');
             if (container) {
@@ -1320,10 +1334,11 @@ window.pokazRejestracje = () => {
                 turnstile.render('#turnstile-container', {
                     sitekey: '0x4AAAAAADVZBdOrbapzXNUP',
                     theme: 'light',
+                    size: 'compact'
                 });
             }
         } else {
-            setTimeout(renderujReg, 500);
+            setTimeout(renderujReg, 100);
         }
     };
     renderujReg();
