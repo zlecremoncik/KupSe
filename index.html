@@ -543,7 +543,7 @@
     }
 
     // Funkcje do okien modalnych (Regulamin, Kontakt itp.)
-    window.pokazModalPrawny = function(typ) {
+        window.pokazModalPrawny = function(typ) {
     const modal = document.getElementById('modal-view');
     const content = document.getElementById('view-content');
     let tytul = "";
@@ -626,7 +626,6 @@
                 <p>Strona wykorzystuje cookies do utrzymania sesji (zalogowania) oraz analizy ruchu. Możesz je zablokować w przeglądarce, ale strona może wtedy przestać działać poprawnie.</p>
             </div>
         `;
-    }
     } else if(typ === 'kontakt') {
         tytul = "Centrum Pomocy i Kontakt";
         tresc = `
