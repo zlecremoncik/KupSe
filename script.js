@@ -440,11 +440,25 @@ window.pokazSzczegoly = async (id) => {
         ? `<button onclick="event.stopPropagation(); window.otworzChat('${o.user_email}')" style="flex:1; padding:15px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">✉ Wyślij wiadomość</button>`
         : `<p style="font-size:11px; color:gray; text-align:center; width:100%;">Zaloguj się, aby napisać</p>`;
 
-           const btnWstecz = ostatnieWyniki.length > 0 
+               const btnWstecz = ostatnieWyniki.length > 0 
         ? `<button onclick="window.pokazWynikiModal(ostatniTytul, ostatnieWyniki)" style="background:#f5f5f5; border:none; padding:8px 16px; border-radius:20px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:6px; font-size:13px; color:#333; transition: 0.2s;">← Powrót</button>` 
         : "";
 
     document.getElementById('view-content').innerHTML = `
+        <style>
+            /* Styl dla komputera (domyślny) */
+            .main-split { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+            
+            /* Styl specjalnie dla TELEFONU */
+            @media (max-width: 768px) {
+                .main-split { display: flex; flex-direction: column; gap: 20px; }
+                .main-foto-box { height: 250px !important; } /* Niższe zdjęcie na telefonie */
+                .info-column { gap: 10px; }
+                .action-buttons { flex-wrap: wrap; }
+                .modal-box { padding: 15px !important; } /* Mniejszy margines okna */
+            }
+        </style>
+
         <!-- NAGŁÓWEK -->
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0;">
             <div>
@@ -456,21 +470,21 @@ window.pokazSzczegoly = async (id) => {
             <button class="close-btn" onclick="window.zamknijModal()" style="position:static; background:#f5f5f5; border:none; width:35px; height:35px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:22px; color:#333;">&times;</button>
         </div>
 
-        <!-- UKŁAD 2/3 (FOTO) | 1/3 (DANE) -->
-        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:30px; margin-bottom:20px;">
+        <!-- GŁÓWNY UKŁAD (ELASTYCZNY) -->
+        <div class="main-split">
             
-            <!-- LEWA STRONA: ZDJĘCIA (2/3) -->
-            <div>
-                <div style="background:#000; border-radius:15px; height:400px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+            <!-- LEWA STRONA: ZDJĘCIA -->
+            <div class="foto-column">
+                <div class="main-foto-box" style="background:#000; border-radius:15px; height:400px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
                     <img id="mainFoto" src="${window.aktualneFotki[0]}" style="max-width:100%; max-height:100%; object-fit: contain;" onclick="window.otworzFullFoto()">
                 </div>
-                <div style="display:flex; gap:8px; margin-top:12px; overflow-x:auto;">
-                    ${window.aktualneFotki.map((img, i) => `<img src="${img}" onclick="window.zmienGlowneZdjecie(${i})" class="mini-foto" style="width:70px; height:70px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid ${i===0?'var(--primary)':'transparent'};">`).join('')}
+                <div style="display:flex; gap:8px; margin-top:12px; overflow-x:auto; padding-bottom:5px;">
+                    ${window.aktualneFotki.map((img, i) => `<img src="${img}" onclick="window.zmienGlowneZdjecie(${i})" class="mini-foto" style="width:70px; height:70px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid ${i===0?'var(--primary)':'transparent'}; flex-shrink:0;">`).join('')}
                 </div>
             </div>
 
-            <!-- PRAWA STRONA: DANE (1/3) -->
-            <div style="display:flex; flex-direction:column;">
+            <!-- PRAWA STRONA: DANE -->
+            <div class="info-column" style="display:flex; flex-direction:column;">
                 <div style="font-size:11px; color:gray;">Dodano: ${formatujDate(o.created_at)}</div>
                 <h2 style="font-size:24px; margin:10px 0; color:var(--text); line-height:1.2;">${o.tytul}</h2>
                 <h1 style="color:var(--primary); font-size:32px; margin:5px 0;">${o.cena} zł</h1>
@@ -481,7 +495,7 @@ window.pokazSzczegoly = async (id) => {
                 </div>
 
                 <!-- PRZYCISKI AKCJI -->
-                <div style="display:flex; gap:8px; align-items:center; margin-top:25px;">
+                <div class="action-buttons" style="display:flex; gap:8px; align-items:center; margin-top:25px;">
                     ${(user && user.email !== o.user_email) ? 
                         `<button onclick="event.stopPropagation(); window.otworzChat('${o.user_email}')" style="padding:12px 20px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:800; cursor:pointer; font-size:14px; display:flex; align-items:center; gap:8px;">✉ Wyślij wiadomość</button>` : 
                         `<span style="font-size:12px; color:gray;">${user ? '' : 'Zaloguj się, aby napisać'}</span>`
@@ -492,7 +506,7 @@ window.pokazSzczegoly = async (id) => {
                     </button>
                 </div>
 
-                <!-- SPRZEDAJĄCY - TERAZ BEZPOŚREDNIO POD PRZYCISKAMI -->
+                <!-- SPRZEDAJĄCY -->
                 <div style="margin-top:20px; padding:15px; background:#fbfbfb; border-radius:12px; border:1px solid #f0f0f0;">
                     <div style="font-size:13px; color:#555; display:flex; align-items:center; gap:6px;">
                         👤 Sprzedający: <b style="color:var(--text);">${dajNazwe(o.user_email)}</b>
@@ -504,10 +518,10 @@ window.pokazSzczegoly = async (id) => {
             </div>
         </div>
 
-        <!-- OPIS NA CAŁĄ SZEROKOŚĆ -->
+        <!-- OPIS (Zawsze na dole, na całą szerokość) -->
         <div style="border-top: 1px solid #eee; padding-top: 25px; margin-top:10px;">
             <h3 style="margin-bottom:15px; font-size:18px; font-weight:800;">Opis ogłoszenia</h3>
-            <div style="background: #ffffff; padding: 0; border-radius: 0;">
+            <div style="background: #ffffff;">
                 <p style="white-space:pre-line; font-size:15px; line-height:1.7; color:#333; margin:0;">${o.opis}</p>
             </div>
             <div style="margin-top: 30px; font-size: 11px; color: #aaa; text-align: right; border-top: 1px solid #f9f9f9; padding-top: 10px;">
