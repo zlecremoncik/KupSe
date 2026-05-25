@@ -440,56 +440,78 @@ window.pokazSzczegoly = async (id) => {
         ? `<button onclick="event.stopPropagation(); window.otworzChat('${o.user_email}')" style="flex:1; padding:15px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">✉ Wyślij wiadomość</button>`
         : `<p style="font-size:11px; color:gray; text-align:center; width:100%;">Zaloguj się, aby napisać</p>`;
 
-    const btnWstecz = ostatnieWyniki.length > 0 
+        const btnWstecz = ostatnieWyniki.length > 0 
         ? `<button onclick="window.pokazWynikiModal(ostatniTytul, ostatnieWyniki)" style="background:#f5f5f5; border:none; padding:8px 16px; border-radius:20px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:6px; font-size:13px; color:#333; transition: 0.2s;">← Powrót</button>` 
         : "";
 
     document.getElementById('view-content').innerHTML = `
-        <!-- NOWOCZESNY PASEK GÓRNY (ROZDZIELA PRZYCISKI) -->
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0;">
+        <!-- NAGŁÓWEK Z KATEGORIAMI -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0;">
             <div>
                 ${btnWstecz}
-                <div style="font-size:11px; color:#777; margin-top:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">
+                <div style="font-size:11px; color:#777; margin-top:8px; font-weight:600; text-transform:uppercase;">
                     ${o.kategoria} <span style="color:#ccc; margin:0 5px;">—</span> ${o.podkategoria}
                 </div>
             </div>
-            <button class="close-btn" onclick="window.zamknijModal()" style="position:static; background:#f5f5f5; border:none; width:35px; height:35px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:22px; color:#333; transition: 0.3s;">
-                &times;
-            </button>
+            <button class="close-btn" onclick="window.zamknijModal()" style="position:static; background:#f5f5f5; border:none; width:35px; height:35px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:22px; color:#333;">&times;</button>
         </div>
 
-        <div style="display:flex; flex-direction: column; gap:15px;">
-            <div style="width:100%;">
-                <div style="background:#000; border-radius:15px; height:280px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+        <!-- GŁÓWNY UKŁAD: LEWO (FOTO) | PRAWO (DANE) -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-bottom:20px;" class="modal-grid-split">
+            
+            <!-- LEWA KOLUMNA: ZDJĘCIA -->
+            <div>
+                <div style="background:#000; border-radius:15px; height:320px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
                     <img id="mainFoto" src="${window.aktualneFotki[0]}" style="max-width:100%; max-height:100%; object-fit: contain;" onclick="window.otworzFullFoto()">
                 </div>
-                <div style="display:flex; gap:8px; margin-top:10px; overflow-x:auto; padding-bottom:5px;">
-                    ${window.aktualneFotki.map((img, i) => `<img src="${img}" onclick="window.zmienGlowneZdjecie(${i})" class="mini-foto" style="width:60px; height:60px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid ${i===0?'var(--primary)':'transparent'}; flex-shrink:0;">`).join('')}
+                <div style="display:flex; gap:8px; margin-top:10px; overflow-x:auto;">
+                    ${window.aktualneFotki.map((img, i) => `<img src="${img}" onclick="window.zmienGlowneZdjecie(${i})" class="mini-foto" style="width:65px; height:65px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid ${i===0?'var(--primary)':'transparent'};">`).join('')}
                 </div>
             </div>
-            <div style="width:100%;">
+
+            <!-- PRAWA KOLUMNA: INFORMACJE -->
+            <div style="display:flex; flex-direction:column; justify-content: flex-start;">
                 <div style="font-size:11px; color:gray;">Dodano: ${formatujDate(o.created_at)}</div>
-                <h2 style="font-size:18px; margin:10px 0;">${o.tytul}</h2>
-                <h1 style="color:var(--primary); font-size:24px; margin:5px 0;">${o.cena} zł</h1>
-                                <p style="font-size:14px;">📍 ${o.lokalizacja} | 📞 ${telefonWidok}</p>
-                <div style="font-size:13px; margin-bottom:15px; color:#555; display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
-                    <span>👤 Sprzedający: <b>${dajNazwe(o.user_email)}</b></span>
-                    <a href="javascript:void(0)" onclick="window.pokazOgloszeniaUzytkownika('${o.user_email}')" style="color:var(--primary); text-decoration:none; font-weight:bold; font-size:12px;">(Wszystkie ogłoszenia użytkownika)</a>
+                <h2 style="font-size:22px; margin:10px 0; color:var(--text); line-height:1.2;">${o.tytul}</h2>
+                <h1 style="color:var(--primary); font-size:28px; margin:5px 0;">${o.cena} zł</h1>
+                
+                <div style="margin-top:15px; font-size:14px; color:#444; display:flex; flex-direction:column; gap:8px;">
+                    <span>📍 Lokalizacja: <b>${o.lokalizacja}</b></span>
+                    <span>📞 Telefon: <b>${telefonWidok}</b></span>
                 </div>
-                <div style="display:flex; gap:10px; margin-top:15px; align-items:center;">
-                    ${przyciskChatu}
-                    <button onclick="window.udostepnijOgloszenie(event, ${o.id})" style="padding:15px; background:#f0f0f0; border:none; border-radius:10px; cursor:pointer; font-size:20px;">🔗</button>
-                    <button onclick="window.toggleUlubione(event, ${o.id})" class="fav-btn-${o.id}" style="padding:15px; background:#f0f0f0; border:none; border-radius:10px; cursor:pointer; font-size:20px;">
+
+                <!-- PRZYCISKI AKCJI -->
+                <div style="display:flex; gap:10px; align-items:center; margin-top:20px;">
+                    ${(user && user.email !== o.user_email) ? 
+                        `<button onclick="event.stopPropagation(); window.otworzChat('${o.user_email}')" style="padding:10px 20px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer; font-size:14px;">✉ Wyślij wiadomość</button>` : 
+                        `<span style="font-size:12px; color:gray;">${user ? '' : 'Zaloguj się, aby wysłać wiadomość'}</span>`
+                    }
+                    <button onclick="window.udostepnijOgloszenie(event, ${o.id})" style="width:40px; height:40px; background:#f0f0f0; border:none; border-radius:10px; cursor:pointer; font-size:20px; display:flex; align-items:center; justify-content:center;">🔗</button>
+                    <button onclick="window.toggleUlubione(event, ${o.id})" class="fav-btn-${o.id}" style="width:40px; height:40px; background:#f0f0f0; border:none; border-radius:10px; cursor:pointer; font-size:20px; display:flex; align-items:center; justify-content:center;">
                         ${mojeUlubione.includes(o.id) ? '❤️' : '🤍'}
                     </button>
                 </div>
-                <h3 style="margin-top:20px; font-size:16px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Opis</h3>
-                <div style="background: #f9f9f9; padding: 15px; border-radius: 12px; margin-top: 10px;">
-                    <p style="white-space:pre-line; font-size:14px; line-height:1.6; color:#333;">${o.opis}</p>
+
+                <!-- SPRZEDAJĄCY -->
+                <div style="margin-top:auto; padding-top:20px; border-top:1px dashed #eee;">
+                    <div style="font-size:13px; color:#555;">
+                        👤 Sprzedający: <b style="color:var(--text);">${dajNazwe(o.user_email)}</b>
+                    </div>
+                    <a href="javascript:void(0)" onclick="window.pokazOgloszeniaUzytkownika('${o.user_email}')" style="color:var(--primary); text-decoration:none; font-weight:bold; font-size:12px; display:block; margin-top:5px;">
+                        (Wszystkie ogłoszenia użytkownika)
+                    </a>
                 </div>
-                <div style="margin-top: 15px; font-size: 12px; color: #777; text-align: right; border-top: 1px solid #eee; padding-top: 10px;">
-                    👁️ Wyświetlenia strony: <b>${o.wyswietlenia}</b>
-                </div>
+            </div>
+        </div>
+
+        <!-- DOLNA SEKCJA: OPIS (PEŁNA SZEROKOŚĆ) -->
+        <div style="border-top: 1px solid #eee; padding-top: 20px;">
+            <h3 style="margin-bottom:10px; font-size:16px;">Opis ogłoszenia</h3>
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 12px;">
+                <p style="white-space:pre-line; font-size:14px; line-height:1.6; color:#333; margin:0;">${o.opis}</p>
+            </div>
+            <div style="margin-top: 15px; font-size: 11px; color: #999; text-align: right;">
+                👁️ Wyświetlenia strony: <b>${o.wyswietlenia}</b>
             </div>
         </div>`;
     document.getElementById('modal-view').style.display = 'flex';
