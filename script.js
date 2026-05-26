@@ -149,9 +149,13 @@ window.loguj = async () => {
         options: { captchaToken: token } // Wysyłamy ten dowód do systemu
     });
 
-    if (error) {
-        alert("Błąd: " + error.message);
-        turnstile.reset(); // Jeśli hasło było złe, odświeżamy okienko bota
+        if (error) {
+        let komunikat = error.message;
+        if (komunikat === "Invalid login credentials") {
+            komunikat = "Nieprawidłowe hasło lub login";
+        }
+        alert("Błąd: " + komunikat);
+        turnstile.reset(); 
     } else {
         location.reload();
     }
