@@ -736,7 +736,26 @@ window.updateFormSubcats = (p = 'f-') => {
                         <option value="Manualna">Manualna</option>
                     </select>
                 </div>
+                         </div>
             </div>`;
+    }
+    
+    // AKTUALIZACJA LIMITU ZDJĘĆ
+    const limit = window.dajLimitZdjec();
+    const infoTekst = document.querySelector('#foto-container small');
+    const inputPlik = document.getElementById('f-plik') || document.getElementById('f-plik-nowe');
+    
+    if (infoTekst) infoTekst.innerText = `Maksymalnie ${limit} zdjęć`;
+    if (inputPlik) {
+        inputPlik.onchange = function() {
+            const obecne = window.tempZdjeciaEdycja ? window.tempZdjeciaEdycja.length : 0;
+            if(this.files.length + obecne > limit) {
+                alert(`W tej kategorii limit to ${limit} zdjęć!`);
+                this.value = '';
+            }
+        };
+    }
+};   </div>`;
     }
 };
 
@@ -1309,11 +1328,18 @@ window.edytujOgloszenie = (id) => {
         });
         h += `</div>`;
         h += `<input type="file" id="f-plik-nowe" accept="image/*" multiple onchange="window.limitZdjec(this)" style="font-size:12px;">`;
-        h += `<small style="display:block; margin-top:5px; color:gray;">Możesz dodać jeszcze ${5 - window.tempZdjeciaEdycja.length} zdjęć.</small>`;
+                const limit = window.dajLimitZdjec();
+        h += `<small style="display:block; margin-top:5px; color:gray;">Możesz dodać jeszcze ${limit - window.tempZdjeciaEdycja.length} zdjęć (limit: ${limit}).</small>`;
         fotoBox.innerHTML = h;
     };
     window.usunFotoZEdycji = (i) => { window.tempZdjeciaEdycja.splice(i, 1); odswiezZdjecia(); };
-    window.limitZdjec = (inp) => { if(inp.files.length + window.tempZdjeciaEdycja.length > 5) { alert("Łącznie max 5 zdjęć!"); inp.value = ""; } };
+    window.limitZdjec = (inp) => { i    window.limitZdjec = (inp) => { 
+        const limit = window.dajLimitZdjec();
+        if(inp.files.length + window.tempZdjeciaEdycja.length > limit) { 
+            alert(`W tej kategorii limit to ${limit} zdjęć!`); 
+            inp.value = ""; 
+        } 
+    };f(inp.files.length + window.tempZdjeciaEdycja.length > 5) { alert("Łącznie max 5 zdjęć!"); inp.value = ""; } };
 
     odswiezZdjecia();
 
@@ -1469,4 +1495,14 @@ window.odswiezModeleFiltry = () => {
     } else {
         modelSelect.innerHTML = '<option value="">Model (Wszystkie)</option>';
     }
+};
+// Ta funkcja sprawdza, jaki limit zdjęć powinien obowiązywać
+window.dajLimitZdjec = () => {
+    const kat = document.getElementById('f-kat')?.value;
+    const podkat = document.getElementById('f-podkat')?.value;
+    
+    if (kat === 'Nieruchomości' || (kat === 'Motoryzacja' && podkat === 'Samochody osobowe')) {
+        return 7;
+    }
+    return 5;
 };
