@@ -583,11 +583,8 @@ window.otworzFullFoto = () => {
 window.zamknijLightbox = () => {
     const lb = document.getElementById('lightbox-box');
     if (lb && lb.style.display === 'flex') {
-        lb.style.display = 'none';
-        // Jeśli zamknęliśmy przyciskiem X, musimy usunąć ślad z historii
-        if (window.history.state && window.history.state.view === 'lightbox') {
-            window.history.back();
-        }
+        // Nie zamykamy okna ręcznie, pozwalamy systemowi "wrócić" do ogłoszenia
+        window.history.back();
     }
 };
 
