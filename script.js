@@ -59,7 +59,51 @@ const SUB_DATA = {
     'Nauka': ['Książki i podręczniki', 'Instrumenty muzyczne', 'Korepetycje', 'Artykuły biurowe', 'Kursy i szkolenia', 'Pozostałe'],
     'Usługi': ['Budowlane', 'Transport i przeprowadzki', 'Naprawa elektroniki', 'Uroda i zdrowie', 'Finanse i prawo', 'Pozostałe'],
     'Praca': ['Budowa / Remonty', 'Kierowca / Logistyka', 'Gastronomia', 'Praca biurowa', 'Sprzedaż / Handel', 'Pozostałe'],
-    'Inne': ['Kolekcje', 'Antyki', 'Bilety', 'Oddam za darmo', 'Zamienię', 'Pozostałe']
+        'Inne': ['Kolekcje', 'Antyki', 'Bilety', 'Oddam za darmo', 'Zamienię', 'Pozostałe']
+};
+
+const MOTO_DATA = {
+  "Abarth": ["500", "595", "695", "124 Spider", "Grande Punto", "Punto Evo", "Pozostałe"],
+  "Alfa Romeo": ["145", "146", "147", "155", "156", "159", "164", "166", "4C", "8C", "Brera", "Giulia", "Giulietta", "GT", "GTV", "MiTo", "Spider", "Stelvio", "Tonale", "Pozostałe"],
+  "Audi": ["80", "90", "100", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "Allroad", "e-tron", "Q2", "Q3", "Q4 e-tron", "Q5", "Q7", "Q8", "R8", "RS3", "RS4", "RS5", "RS6", "RS7", "S1", "S3", "S4", "S5", "S6", "S7", "S8", "SQ5", "SQ7", "SQ8", "TT", "TTS", "TT RS", "Pozostałe"],
+  "BMW": ["1M", "3GT", "5GT", "6GT", "i3", "i4", "i5", "i7", "i8", "IX", "IX1", "IX2", "IX3", "M2", "M3", "M4", "M5", "M8", "Seria 1", "Seria 2", "Seria 3", "Seria 4", "Seria 5", "Seria 6", "Seria 7", "Seria 8", "X1", "X2", "X3", "X3 M", "X4", "X5", "X5 M", "X6", "X6 M", "X7", "XM", "Z3", "Z4", "Pozostałe"],
+  "Chevrolet": ["Aveo", "Camaro", "Captiva", "Corvette", "Cruze", "Epica", "Kalos", "Lacetti", "Malibu", "Orlando", "Spark", "Tahoe", "Trax", "Pozostałe"],
+  "Citroen": ["AX", "Berlingo", "BX", "C1", "C2", "C3", "C3 Aircross", "C4", "C4 Cactus", "C4 Picasso", "C5", "C5 Aircross", "C6", "C8", "DS3", "DS4", "DS5", "Jumper", "Jumpy", "Saxo", "Xantia", "Xsara", "Pozostałe"],
+  "Cupra": ["Ateca", "Born", "Formentor", "Leon", "Tavascan", "Terramar", "Pozostałe"],
+  "Dacia": ["Dokker", "Duster", "Jogger", "Lodgy", "Logan", "Sandero", "Spring", "Pozostałe"],
+  "Daewoo": ["Espero", "Kalos", "Lanos", "Leganza", "Matiz", "Nexia", "Nubira", "Tacuma", "Tico", "Pozostałe"],
+  "Dodge": ["Caliber", "Challenger", "Charger", "Durango", "Journey", "Nitro", "RAM", "Viper", "Pozostałe"],
+  "DS Automobiles": ["DS 3", "DS 4", "DS 5", "DS 7", "DS 9", "Pozostałe"],
+  "Fiat": ["500", "500L", "500X", "126", "127", "Bravo", "Brava", "Cinquecento", "Croma", "Doblo", "Ducato", "Fiorino", "Freemont", "Grande Punto", "Linea", "Multipla", "Panda", "Punto", "Punto Evo", "Scudo", "Sedici", "Seicento", "Stilo", "Tipo", "Ulysse", "Pozostałe"],
+  "Ford": ["B-Max", "C-Max", "EcoSport", "Edge", "Escape", "Escort", "Explorer", "Fiesta", "Focus", "Fusion", "Galaxy", "Ka", "Kuga", "Maverick", "Mondeo", "Mustang", "Puma", "Ranger", "S-Max", "Tourneo", "Transit", "Pozostałe"],
+  "Honda": ["Accord", "CR-V", "Civic", "City", "FR-V", "HR-V", "Insight", "Jazz", "Legend", "Prelude", "S2000", "Pozostałe"],
+  "Hyundai": ["Accent", "Atos", "Bayon", "Coupe", "Elantra", "Getz", "H-1", "i10", "i20", "i30", "i40", "IONIQ", "ix20", "ix35", "Kona", "Matrix", "Santa Fe", "Sonata", "Terracan", "Tucson", "Veloster", "Pozostałe"],
+  "Infiniti": ["EX", "FX", "G", "M", "Q30", "Q50", "Q60", "Q70", "QX30", "QX50", "Pozostałe"],
+  "Isuzu": ["D-Max", "Trooper", "Pozostałe"],
+  "Jaguar": ["E-Pace", "F-Pace", "F-Type", "I-Pace", "S-Type", "XE", "XF", "XJ", "XK", "Pozostałe"],
+  "Jeep": ["Avenger", "Cherokee", "Commander", "Compass", "Gladiator", "Grand Cherokee", "Patriot", "Renegade", "Wrangler", "Pozostałe"],
+  "Kia": ["Carens", "Carnival", "Ceed", "Cerato", "EV6", "Magentis", "Niro", "Optima", "Picanto", "Proceed", "Rio", "Sorento", "Soul", "Sportage", "Stinger", "Stonic", "Venga", "XCeed", "Pozostałe"],
+  "Lamborghini": ["Aventador", "Gallardo", "Huracan", "Murcielago", "Revuelto", "Urus", "Pozostałe"],
+  "Land Rover": ["Defender", "Discovery", "Discovery Sport", "Freelander", "Range Rover", "Range Rover Evoque", "Range Rover Sport", "Range Rover Velar", "Pozostałe"],
+  "Lexus": ["CT", "ES", "GS", "IS", "LC", "LS", "LX", "NX", "RC", "RX", "RZ", "UX", "Pozostałe"],
+  "Mazda": ["2", "3", "5", "6", "CX-3", "CX-5", "CX-7", "CX-9", "MX-5", "RX-8", "Pozostałe"],
+  "Mercedes-Benz": ["Klasa A", "Klasa B", "Klasa C", "Klasa CLA", "Klasa CLK", "Klasa CLS", "Klasa E", "Klasa EQB", "Klasa EQC", "Klasa EQE", "Klasa EQS", "Klasa G", "Klasa GLA", "Klasa GLB", "Klasa GLC", "Klasa GLE", "Klasa GLS", "Klasa M", "Klasa S", "SL", "SLK", "Sprinter", "Vito", "Pozostałe"],
+  "Mini": ["Clubman", "Countryman", "Cooper", "Coupe", "Paceman", "Roadster", "Pozostałe"],
+  "Mitsubishi": ["ASX", "Carisma", "Colt", "Eclipse Cross", "Galant", "Grandis", "L200", "Lancer", "Outlander", "Pajero", "Space Star", "Pozostałe"],
+  "Nissan": ["350Z", "370Z", "Almera", "GT-R", "Juke", "Leaf", "Micra", "Murano", "Navara", "Note", "Pathfinder", "Patrol", "Primera", "Pulsar", "Qashqai", "Terrano", "X-Trail", "Pozostałe"],
+  "Opel": ["Adam", "Agila", "Antara", "Astra", "Calibra", "Combo", "Corsa", "Crossland", "Frontera", "Grandland", "Insignia", "Meriva", "Mokka", "Omega", "Signum", "Tigra", "Vectra", "Vivaro", "Zafira", "Pozostałe"],
+  "Peugeot": ["1007", "106", "107", "108", "2008", "206", "207", "208", "3008", "301", "307", "308", "4007", "407", "408", "5008", "508", "607", "807", "Boxer", "Expert", "Partner", "RCZ", "Pozostałe"],
+  "Porsche": ["718 Boxster", "718 Cayman", "911", "Cayenne", "Macan", "Panamera", "Taycan", "Pozostałe"],
+  "Renault": ["Captur", "Clio", "Espace", "Fluence", "Grand Scenic", "Kadjar", "Kangoo", "Koleos", "Laguna", "Master", "Megane", "Modus", "Scenic", "Talisman", "Thalia", "Trafic", "Twingo", "Vel Satis", "Zoe", "Pozostałe"],
+  "Seat": ["Alhambra", "Altea", "Arona", "Ateca", "Cordoba", "Exeo", "Ibiza", "Leon", "Mii", "Tarraco", "Toledo", "Pozostałe"],
+  "Skoda": ["Citigo", "Fabia", "Favorit", "Felicia", "Kamiq", "Karoq", "Kodiaq", "Octavia", "Rapid", "Roomster", "Scala", "Superb", "Yeti", "Pozostałe"],
+  "Subaru": ["Forester", "Impreza", "Legacy", "Levorg", "Outback", "Tribeca", "WRX", "XV", "Pozostałe"],
+  "Suzuki": ["Across", "Alto", "Baleno", "Grand Vitara", "Ignis", "Jimny", "Kizashi", "Liana", "S-Cross", "Splash", "Swift", "SX4", "Vitara", "Pozostałe"],
+  "Tesla": ["Model 3", "Model S", "Model X", "Model Y", "Cybertruck", "Roadster", "Pozostałe"],
+  "Toyota": ["Auris", "Avensis", "Aygo", "bZ4X", "C-HR", "Camry", "Celica", "Corolla", "GR86", "Hilux", "Highlander", "Land Cruiser", "MR2", "Prius", "Proace", "RAV4", "Supra", "Verso", "Yaris", "Pozostałe"],
+  "Volkswagen": ["Amarok", "Arteon", "Beetle", "Bora", "Caddy", "California", "Caravelle", "CC", "Crafter", "EOS", "Fox", "Golf", "ID.3", "ID.4", "ID.5", "ID.7", "Jetta", "Multivan", "Passat", "Phaeton", "Polo", "Scirocco", "Sharan", "T-Cross", "T-Roc", "Taigo", "Tiguan", "Touareg", "Touran", "Transporter", "Up", "Pozostałe"],
+  "Volvo": ["C30", "C40", "S40", "S60", "S80", "S90", "V40", "V50", "V60", "V70", "V90", "XC40", "XC60", "XC70", "XC90", "Pozostałe"],
+  "Pozostałe": ["Pozostałe"]
 };
 
 const formatujDate = (d) => {
@@ -658,11 +702,17 @@ window.updateFormSubcats = (p = 'f-') => {
     const wybranaPodkat = podkatSelect.value;
     const typyPojazdow = ['Samochody osobowe', 'Dostawcze', 'Motocykle', 'Skutery'];
 
-    if (kat === 'Motoryzacja' && typyPojazdow.includes(wybranaPodkat)) {
+        if (kat === 'Motoryzacja' && typyPojazdow.includes(wybranaPodkat)) {
+        const markiOptions = Object.keys(MOTO_DATA).map(m => `<option value="${m}">${m}</option>`).join('');
         extraFields.innerHTML = `
             <div style="display:grid; gap:10px; margin-bottom:10px;">
-                <input type="text" id="extra-marka" placeholder="Marka" required>
-                <input type="text" id="extra-model" placeholder="Model" required>
+                <select id="extra-marka" onchange="window.odswiezModele()" required>
+                    <option value="">Wybierz markę</option>
+                    ${markiOptions}
+                </select>
+                <select id="extra-model" required>
+                    <option value="">Najpierw wybierz markę</option>
+                </select>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                     <input type="number" id="extra-rok" placeholder="Rok produkcji" required>
                     <input type="number" id="extra-przebieg" placeholder="Przebieg (km)" required>
@@ -1390,4 +1440,16 @@ window.pokazRejestracje = () => {
         }
     };
     renderujReg();
+};
+window.odswiezModele = () => {
+    const marka = document.getElementById('extra-marka').value;
+    const modelSelect = document.getElementById('extra-model');
+    
+    if (MOTO_DATA[marka]) {
+        const modele = MOTO_DATA[marka];
+        modelSelect.innerHTML = '<option value="">Wybierz model</option>' + 
+            modele.map(m => `<option value="${m}">${m}</option>`).join('');
+    } else {
+        modelSelect.innerHTML = '<option value="Pozostałe">Pozostałe</option>';
+    }
 };
