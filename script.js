@@ -985,9 +985,14 @@ window.pokazWynikiModal = (tytul, wyniki, strona = 1) => {
                 
                 <input type="text" id="side-szukaj" placeholder="Czego szukasz?" style="width:100%; margin-bottom:12px; padding:10px; border-radius:8px; border:1px solid #ddd; box-sizing:border-box;">
 
-                ${czyMoto ? `
-                    <input type="text" id="sf-marka" placeholder="Marka" style="width:100%; margin-bottom:12px; padding:10px; border-radius:8px; border:1px solid #ddd; box-sizing:border-box;">
-                    <input type="text" id="sf-model" placeholder="Model" style="width:100%; margin-bottom:12px; padding:10px; border-radius:8px; border:1px solid #ddd; box-sizing:border-box;">
+                                ${czyMoto ? `
+                    <select id="sf-marka" onchange="window.odswiezModeleFiltry()" style="width:100%; margin-bottom:12px; padding:10px; border-radius:8px; border:1px solid #ddd; box-sizing:border-box;">
+                        <option value="">Marka (Wszystkie)</option>
+                        ${Object.keys(MOTO_DATA).map(m => `<option value="${m}">${m}</option>`).join('')}
+                    </select>
+                    <select id="sf-model" style="width:100%; margin-bottom:12px; padding:10px; border-radius:8px; border:1px solid #ddd; box-sizing:border-box;">
+                        <option value="">Model (Wszystkie)</option>
+                    </select>
                     <label style="font-size:10px; font-weight:bold; color:gray;">ROK PRODUKCJI</label>
                     <div style="display:flex; gap:5px; margin-bottom:12px;">
                         <input type="number" id="sf-rok-min" placeholder="Od" style="width:50%; padding:8px; border-radius:8px; border:1px solid #ddd;">
@@ -1451,5 +1456,17 @@ window.odswiezModele = () => {
             modele.map(m => `<option value="${m}">${m}</option>`).join('');
     } else {
         modelSelect.innerHTML = '<option value="Pozostałe">Pozostałe</option>';
+    }
+};// Ta funkcja obsługuje listę modeli w okienku filtrów
+window.odswiezModeleFiltry = () => {
+    const marka = document.getElementById('sf-marka').value;
+    const modelSelect = document.getElementById('sf-model');
+    
+    if (MOTO_DATA[marka]) {
+        const modele = MOTO_DATA[marka];
+        modelSelect.innerHTML = '<option value="">Model (Wszystkie)</option>' + 
+            modele.map(m => `<option value="${m}">${m}</option>`).join('');
+    } else {
+        modelSelect.innerHTML = '<option value="">Model (Wszystkie)</option>';
     }
 };
