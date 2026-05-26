@@ -218,9 +218,9 @@ async function sprawdzUzytkownika() {
                 <div style="position:relative;">
                     <button onclick="window.toggleUserMenu(event)" style="background:var(--primary); color:white; border:none; padding:10px 15px; border-radius:10px; cursor:pointer; font-weight:800; font-size:13px; display:flex; align-items:center; gap:5px; position:relative;">
                         Moje Konto ▼
-                        ${msgCount > 0 ? `<span id="msg-badge" style="position:absolute; top:-8px; right:-8px; background:red; color:white; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; border:2px solid white; font-weight:bold;">${msgCount}</span>` : ''}
+                                                ${msgCount > 0 ? `<span id="msg-badge" style="position:absolute; top:-8px; right:-8px; background:red; color:white; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:11px; border:2px solid white; font-weight:bold;">${msgCount}</span>` : ''}
                                         </button>
-                    <div id="drop-menu" style="display:none; position:absolute; top:110%; right:0; background:white; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:15px; padding:5px; z-index:2001; min-width:210px; border:1px solid #eee;">
+                    <div id="drop-menu" style="display:none; position:absolute; top:110%; left:0; background:white; box-shadow:0 10px 30px rgba(0,0,0,0.2); border-radius:15px; padding:5px; z-index:2001; min-width:210px; border:1px solid #eee;">
                         <div onclick="window.pokazMojeOgloszenia()" style="padding:12px 15px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;"><span>📝</span> Moje ogłoszenia</div>
                         <div onclick="window.pokazSkrzynke()" style="padding:12px 15px; cursor:pointer; border-bottom:1px solid #f5f5f5; font-size:14px; text-align:left; display:flex; align-items:center; gap:10px;">
                             <span>✉️</span> Wiadomości 
