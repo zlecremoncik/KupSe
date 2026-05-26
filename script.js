@@ -745,7 +745,7 @@ window.updateFormSubcats = (p = 'f-') => {
     const infoTekst = document.querySelector('#foto-container small');
     const inputPlik = document.getElementById('f-plik') || document.getElementById('f-plik-nowe');
     
-    if (infoTekst) infoTekst.innerText = `Maksymalnie ${limit} zdjęć`;
+        if (infoTekst) infoTekst.innerText = `Maksymalnie ${limit} zdjęć`;
     if (inputPlik) {
         inputPlik.onchange = function() {
             const obecne = window.tempZdjeciaEdycja ? window.tempZdjeciaEdycja.length : 0;
@@ -754,8 +754,6 @@ window.updateFormSubcats = (p = 'f-') => {
                 this.value = '';
             }
         };
-    }
-};   </div>`;
     }
 };
 
@@ -1332,14 +1330,14 @@ window.edytujOgloszenie = (id) => {
         h += `<small style="display:block; margin-top:5px; color:gray;">Możesz dodać jeszcze ${limit - window.tempZdjeciaEdycja.length} zdjęć (limit: ${limit}).</small>`;
         fotoBox.innerHTML = h;
     };
-    window.usunFotoZEdycji = (i) => { window.tempZdjeciaEdycja.splice(i, 1); odswiezZdjecia(); };
-    window.limitZdjec = (inp) => { i    window.limitZdjec = (inp) => { 
+        window.usunFotoZEdycji = (i) => { window.tempZdjeciaEdycja.splice(i, 1); odswiezZdjecia(); };
+    window.limitZdjec = (inp) => { 
         const limit = window.dajLimitZdjec();
         if(inp.files.length + window.tempZdjeciaEdycja.length > limit) { 
             alert(`W tej kategorii limit to ${limit} zdjęć!`); 
             inp.value = ""; 
         } 
-    };f(inp.files.length + window.tempZdjeciaEdycja.length > 5) { alert("Łącznie max 5 zdjęć!"); inp.value = ""; } };
+    };
 
     odswiezZdjecia();
 
