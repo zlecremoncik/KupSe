@@ -550,11 +550,10 @@ window.pokazSzczegoly = async (id) => {
                 <h2 style="font-size:24px; margin:10px 0; color:var(--text); line-height:1.2;">${o.tytul}</h2>
                 <h1 style="color:var(--primary); font-size:32px; margin:5px 0;">${o.cena} zł</h1>
                 
-                <div style="margin-top:15px; font-size:15px; color:#444; display:flex; flex-direction:column; gap:10px;">
-                    <span>📍 Lokalizacja: <b>${o.lokalizacja}</b></span>
-                    <span>📞 Telefon: <b>${telefonWidok}</b></span>
+                                <div style="margin-top:15px; font-size:15px; color:#444; display:flex; flex-direction:column; gap:12px;">
+                    <span style="display:flex; align-items:center;">📍 Lokalizacja: <b style="margin-left:8px;">${o.lokalizacja}</b></span>
+                    <span style="display:flex; align-items:center;">📞 Telefon: ${telefonWidok}</span>
                 </div>
-
                 <!-- PRZYCISKI AKCJI -->
                 <div class="action-buttons" style="display:flex; gap:8px; align-items:center; margin-top:25px;">
                     ${(user && user.email !== o.user_email) ? 
