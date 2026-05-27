@@ -487,16 +487,17 @@ window.pokazSzczegoly = async (id) => {
         user = session.data?.session?.user || null;
     }
 
-    window.aktualneFotki = Array.isArray(o.zdjecia) ? o.zdjecia : [o.zdjecia];
+        window.aktualneFotki = Array.isArray(o.zdjecia) ? o.zdjecia : [o.zdjecia];
     const telFormat = o.telefon ? o.telefon.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : 'Brak numeru';
-    const telefonWidok = user ? `<b>${telFormat}</b>` : `<span style="color:red; font-size:12px;">[Zaloguj się]</span>`;
+    // Link "tel:" sprawia, że numer dzwoni po kliknięciu
+    const telefonWidok = user ? `<a href="tel:${o.telefon}" style="text-decoration:none; color:inherit;"><b>${telFormat}</b></a>` : `<span style="color:red; font-size:12px;">[Zaloguj się]</span>`;
     
     const przyciskChatu = (user && user.email !== o.user_email) 
         ? `<button onclick="event.stopPropagation(); window.otworzChat('${o.user_email}')" style="flex:1; padding:15px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">✉ Wyślij wiadomość</button>`
         : `<p style="font-size:11px; color:gray; text-align:center; width:100%;">Zaloguj się, aby napisać</p>`;
 
-               const btnWstecz = ostatnieWyniki.length > 0 
-        ? `<button onclick="window.pokazWynikiModal(ostatniTytul, ostatnieWyniki)" style="background:#f5f5f5; border:none; padding:8px 16px; border-radius:20px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:6px; font-size:13px; color:#333; transition: 0.2s;">← Powrót</button>` 
+    const btnWstecz = ostatnieWyniki.length > 0 
+        ? `<button onclick="window.pokazWynikiModal(ostatniTytul, ostatnieWyniki)" style="background:#f5f5f5; border:none; padding:8px 16px; border-radius:20px; cursor:pointer; font-weight:800; display:flex; align-items:center; gap:6px; font-size:13px; color:#111; transition: 0.2s;">⬅ Powrót</button>` 
         : "";
 
     document.getElementById('view-content').innerHTML = `
