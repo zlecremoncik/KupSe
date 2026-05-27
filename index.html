@@ -451,7 +451,7 @@
         <button class="close-btn" onclick="window.zamknijModal()">&times;</button>
           <h2 id="form-title">Dodaj ogłoszenie</h2>
         <form id="form-dodaj" onsubmit="window.wyslijOgloszenie(event)" style="display:flex; flex-direction:column; gap:15px">
-        <div style="position:relative; width:100%;">
+           <div style="position:relative; width:100%;">
         <span id="count-tytul" style="position:absolute; right:5px; bottom:100%; margin-bottom:2px; font-size:11px; color:gray;">zostało: 70</span>
         <input type="text" id="f-tytul" placeholder="Tytuł ogłoszenia (min. 10 max. 70 znaków)" maxlength="70" required oninput="window.updateCounter('f-tytul', 'count-tytul', 70)" style="width:100%; box-sizing:border-box;">
     </div>
@@ -503,8 +503,8 @@
         <option value="zachodniopomorskie">zachodniopomorskie</option>
     </select>
 
-            <div style="position:relative; width:100%;">
-        <span id="count-opis" style="position:absolute; right:5px; bottom:100%; margin-bottom:2px; font-size:11px; color:gray;">zostało: 8000</span>
+                        <div style="position:relative; width:100%;">
+        <span id="count-opis" style="position:absolute; right:5px; bottom:calc(100% + 2px); font-size:11px; color:gray;">zostało: 8000</span>
         <textarea id="f-opis" placeholder="Szczegółowy opis przedmiotu... (min. 50 znaków)" style="height:120px; width:100%; box-sizing:border-box;" maxlength="8000" required oninput="window.updateCounter('f-opis', 'count-opis', 8000)"></textarea>
     </div>
     
@@ -522,7 +522,6 @@
         <small style="font-size: 11px; color: #666;">
             * Twój numer telefonu będzie widoczny dla osób zainteresowanych zakupem.
         </small>
-    </div>
     </div>
     
     <div id="foto-container" style="background:#f9f9f9; padding:15px; border-radius:10px; border:2px dashed #ddd; position:relative;">
