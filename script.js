@@ -515,11 +515,11 @@ window.pokazSzczegoly = async (id) => {
     const telFormat = telCzysty ? telCzysty.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '';
     
     let telefonWidok = "";
-    if (!telCzysty) {
+        if (!telCzysty) {
         telefonWidok = `<b style="margin-left:8px; color:gray;">Nie podano</b>`;
     } else {
         telefonWidok = user ? `
-            <button onclick="this.outerHTML='<b style=\'font-size:16px; margin-left:8px; font-weight:800;\'>${telFormat}</b>'" 
+            <button onclick="this.outerHTML='<b style=&quot;font-size:16px; margin-left:8px; font-weight:800;&quot;>${telFormat}</b>'" 
                     style="background:var(--primary); color:white; border:none; padding:4px 15px; border-radius:8px; font-weight:800; cursor:pointer; font-size:12px; margin-left:8px; vertical-align:middle;">
                 Pokaż
             </button>` : `<span style="color:red; font-size:11px; margin-left:8px;">[Zaloguj się]</span>`;
