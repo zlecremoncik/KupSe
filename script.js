@@ -141,16 +141,23 @@ window.szukaj = async () => {
     const tekst = p1.value.toLowerCase().trim();
     const loc = p2.value.toLowerCase().trim();
     
-    console.log("Szukam frazy:", tekst, "w lokalizacji:", loc);
+        console.log("Szukam frazy:", tekst, "w lokalizacji:", loc);
+
+    // Funkcja pomocnicza, która usuwa polskie ogonki
+    const bezOgonkow = (t) => t.toLowerCase()
+        .replace(/ą/g, 'a').replace(/ć/g, 'c').replace(/ę/g, 'e').replace(/ł/g, 'l')
+        .replace(/ń/g, 'n').replace(/ó/g, 'o').replace(/ś/g, 's').replace(/ź/g, 'z').replace(/ż/g, 'z');
 
     try {
-        let query = baza.from('ogloszenia').select('*');
-
-        // UWAGA: Sprawdź czy w Supabase kolumny nazywają się 'tytul' i 'lokalizacja'
-        if (tekst) query = query.ilike('tytul', `%${tekst}%`);
-        if (loc) query = query.ilike('lokalizacja', `%${loc}%`);
-
-        const { data, error } = await query.order('created_at', { ascending: false });
+        // Filtrujemy ogłoszenia lokalnie, żeby obsługiwać polskie znaki
+        const data = daneOgloszen.filter(o => {
+            const tytulNorm = bezOgonkow(o.tytul || "");
+            const lokNorm = bezOgonkow(o.lokalizacja || "");
+            return tytulNorm.includes(bezOgonkow(tekst)) && lokNorm.includes(bezOgonkow(loc));
+        });
+        
+        // Udajemy błąd, jeśli nic nie ma (dla zachowania reszty logiki)
+        const error = null; 
 
         if (error) {
             console.error("Błąd z bazy Supabase:", error);
@@ -1064,8 +1071,11 @@ window.zastosujFiltryBoczne = () => {
     const lok = document.getElementById('side-lok')?.value.toLowerCase().trim() || "";
     const sort = document.getElementById('side-sort').value;
 
-    // Funkcja pomocnicza do "inteligentnego" porównywania tekstu
-    const uproscTekst = (t) => t.replace(/[\s-]/g, '').toLowerCase();
+        // Funkcja, która usuwa polskie znaki, spacje i myślniki
+    const uproscTekst = (t) => t.toLowerCase()
+        .replace(/ą/g, 'a').replace(/ć/g, 'c').replace(/ę/g, 'e').replace(/ł/g, 'l')
+        .replace(/ń/g, 'n').replace(/ó/g, 'o').replace(/ś/g, 's').replace(/ź/g, 'z').replace(/ż/g, 'z')
+        .replace(/[\s-]/g, '');
     const szukanaFrazaUproszczona = uproscTekst(fraza);
 
     // Pola Moto
