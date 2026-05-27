@@ -1,3 +1,26 @@
+window.updateCounter = (id, countId, max) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const val = el.value.length;
+    document.getElementById(countId).innerText = `zostało: ${max - val}`;
+};
+
+window.togglePhoneRequired = () => {
+    const isChecked = document.getElementById('f-no-tel').checked;
+    const telInput = document.getElementById('f-tel');
+    if (isChecked) {
+        telInput.required = false;
+        telInput.disabled = true;
+        telInput.value = '';
+        telInput.style.opacity = '0.5';
+        telInput.style.background = '#f0f0f0';
+    } else {
+        telInput.required = true;
+        telInput.disabled = false;
+        telInput.style.opacity = '1';
+        telInput.style.background = '#ffffff';
+    }
+};
 // Ta funkcja zamienia "Suzuki Grand Vitara!" na "suzuki-grand-vitara"
 const zrobLadnyTytul = (t) => {
     return t.toLowerCase()
@@ -489,15 +512,20 @@ window.pokazSzczegoly = async (id) => {
 
                 window.aktualneFotki = Array.isArray(o.zdjecia) ? o.zdjecia : [o.zdjecia];
     // Naprawione: Zamieniamy numer na tekst przed formatowaniem, żeby uniknąć błędu
-    const telCzysty = o.telefon ? String(o.telefon) : '';
-    const telFormat = telCzysty ? telCzysty.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : 'Brak numeru';
+        const telCzysty = o.telefon ? String(o.telefon) : '';
+    const czyPodano = (telCzysty && telCzysty !== 'brak' && telCzysty !== '');
+    const telFormat = czyPodano ? telCzysty.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : 'Nie podano';
     
-    // Pomarańczowy przycisk "Pokaż" - poprawiona obsługa kliknięcia
-    const telefonWidok = user ? `
-        <button onclick="this.outerHTML='<a href=\\'tel:${telCzysty}\\' style=\\'text-decoration:none; color:inherit; font-weight:800; font-size:16px;\\'>${telFormat}</a>'" 
-                style="background:var(--primary); color:white; border:none; padding:4px 15px; border-radius:8px; font-weight:800; cursor:pointer; font-size:12px; margin-left:8px; vertical-align:middle;">
-            Pokaż
-        </button>` : `<span style="color:red; font-size:11px; margin-left:8px;">[Zaloguj się, aby zobaczyć]</span>`;
+    let telefonWidok = "";
+    if (!czyPodano) {
+        telefonWidok = `<b style="margin-left:8px; color:gray;">Nie podano</b>`;
+    } else {
+        telefonWidok = user ? `
+            <button onclick="this.outerHTML='<a href=\'tel:${telCzysty}\' style=\'text-decoration:none; color:inherit; font-weight:800; font-size:16px;\'>${telFormat}</a>'" 
+                    style="background:var(--primary); color:white; border:none; padding:4px 15px; border-radius:8px; font-weight:800; cursor:pointer; font-size:12px; margin-left:8px; vertical-align:middle;">
+                Pokaż
+            </button>` : `<span style="color:red; font-size:11px; margin-left:8px;">[Zaloguj się, aby zobaczyć]</span>`;
+    }
     
     const przyciskChatu = (user && user.email !== o.user_email) 
         ? `<button onclick="event.stopPropagation(); window.otworzChat('${o.user_email}')" style="flex:1; padding:15px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">✉ Wyślij wiadomość</button>`
@@ -812,16 +840,25 @@ window.wyslijOgloszenie = async (e) => {
         }
     }
 
+        const tytulVal = document.getElementById('f-tytul').value;
+    const opisVal = document.getElementById('f-opis').value;
+    const noTel = document.getElementById('f-no-tel').checked;
+    const telVal = document.getElementById('f-tel').value;
+
+    if(tytulVal.length < 10) { alert("Tytuł musi mieć min. 10 znaków!"); btn.disabled = false; btn.innerText = "Spróbuj ponownie"; return; }
+    if(opisVal.length < 50) { alert("Opis musi mieć min. 50 znaków!"); btn.disabled = false; btn.innerText = "Spróbuj ponownie"; return; }
+    if(!noTel && telVal.length !== 9) { alert("Podaj 9-cyfrowy numer lub zaznacz kontakt przez stronę."); btn.disabled = false; btn.innerText = "Spróbuj ponownie"; return; }
+
     const { error } = await baza.from('ogloszenia').insert([{
         user_email: user.email,
-        tytul: document.getElementById('f-tytul').value,
+        tytul: tytulVal,
         kategoria: document.getElementById('f-kat').value,
         podkategoria: document.getElementById('f-podkat').value,
         cena: parseFloat(document.getElementById('f-cena').value),
         lokalizacja: document.getElementById('f-lok').value,
-        opis: document.getElementById('f-opis').value,
+        opis: opisVal,
         zdjecia: zdjeciaUrls,
-        telefon: document.getElementById('f-tel').value
+        telefon: noTel ? 'brak' : telVal
     }]);
 
     if (error) {
@@ -1411,6 +1448,12 @@ window.otworzFormularzDodawania = () => {
     document.getElementById('modal-form').style.display = 'flex';
     document.getElementById('form-title').innerText = "Dodaj nowe ogłoszenie";
     document.getElementById('form-dodaj').reset();
+
+    // Resetowanie liczników i opcji telefonu
+    window.updateCounter('f-tytul', 'count-tytul', 70);
+    window.updateCounter('f-opis', 'count-opis', 8000);
+    document.getElementById('f-no-tel').checked = false;
+    window.togglePhoneRequired();
     
     // Przywracamy standardowy wygląd pola zdjęć
     document.getElementById('foto-container').innerHTML = `
