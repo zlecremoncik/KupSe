@@ -487,10 +487,15 @@ window.pokazSzczegoly = async (id) => {
         user = session.data?.session?.user || null;
     }
 
-        window.aktualneFotki = Array.isArray(o.zdjecia) ? o.zdjecia : [o.zdjecia];
+            window.aktualneFotki = Array.isArray(o.zdjecia) ? o.zdjecia : [o.zdjecia];
     const telFormat = o.telefon ? o.telefon.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : 'Brak numeru';
-    // Link "tel:" sprawia, że numer dzwoni po kliknięciu
-    const telefonWidok = user ? `<a href="tel:${o.telefon}" style="text-decoration:none; color:inherit;"><b>${telFormat}</b></a>` : `<span style="color:red; font-size:12px;">[Zaloguj się]</span>`;
+    
+    // Pomarańczowy przycisk "Pokaż", który po kliknięciu zamienia się w klikalny numer
+    const telefonWidok = user ? `
+        <button onclick="this.outerHTML='<a href=\'tel:${o.telefon}\' style=\'text-decoration:none; color:inherit; font-weight:800; font-size:16px;\'>${telFormat}</a>'" 
+                style="background:var(--primary); color:white; border:none; padding:4px 15px; border-radius:8px; font-weight:800; cursor:pointer; font-size:12px; margin-left:8px; vertical-align:middle;">
+            Pokaż
+        </button>` : `<span style="color:red; font-size:11px; margin-left:8px;">[Zaloguj się, aby zobaczyć]</span>`;
     
     const przyciskChatu = (user && user.email !== o.user_email) 
         ? `<button onclick="event.stopPropagation(); window.otworzChat('${o.user_email}')" style="flex:1; padding:15px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">✉ Wyślij wiadomość</button>`
