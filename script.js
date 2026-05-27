@@ -487,12 +487,14 @@ window.pokazSzczegoly = async (id) => {
         user = session.data?.session?.user || null;
     }
 
-            window.aktualneFotki = Array.isArray(o.zdjecia) ? o.zdjecia : [o.zdjecia];
-    const telFormat = o.telefon ? o.telefon.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : 'Brak numeru';
+                window.aktualneFotki = Array.isArray(o.zdjecia) ? o.zdjecia : [o.zdjecia];
+    // Naprawione: Zamieniamy numer na tekst przed formatowaniem, żeby uniknąć błędu
+    const telCzysty = o.telefon ? String(o.telefon) : '';
+    const telFormat = telCzysty ? telCzysty.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : 'Brak numeru';
     
-    // Pomarańczowy przycisk "Pokaż", który po kliknięciu zamienia się w klikalny numer
+    // Pomarańczowy przycisk "Pokaż" - poprawiona obsługa kliknięcia
     const telefonWidok = user ? `
-        <button onclick="this.outerHTML='<a href=\'tel:${o.telefon}\' style=\'text-decoration:none; color:inherit; font-weight:800; font-size:16px;\'>${telFormat}</a>'" 
+        <button onclick="this.outerHTML='<a href=\\'tel:${telCzysty}\\' style=\\'text-decoration:none; color:inherit; font-weight:800; font-size:16px;\\'>${telFormat}</a>'" 
                 style="background:var(--primary); color:white; border:none; padding:4px 15px; border-radius:8px; font-weight:800; cursor:pointer; font-size:12px; margin-left:8px; vertical-align:middle;">
             Pokaż
         </button>` : `<span style="color:red; font-size:11px; margin-left:8px;">[Zaloguj się, aby zobaczyć]</span>`;
