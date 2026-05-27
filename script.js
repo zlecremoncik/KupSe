@@ -8,17 +8,16 @@ window.updateCounter = (id, countId, max) => {
 window.togglePhoneRequired = () => {
     const isChecked = document.getElementById('f-no-tel').checked;
     const telInput = document.getElementById('f-tel');
+    if (!telInput) return;
     if (isChecked) {
         telInput.required = false;
         telInput.disabled = true;
         telInput.value = '';
-        telInput.style.opacity = '0.5';
-        telInput.style.background = '#f0f0f0';
+        telInput.style.opacity = '0.4';
     } else {
         telInput.required = true;
         telInput.disabled = false;
         telInput.style.opacity = '1';
-        telInput.style.background = '#ffffff';
     }
 };
 // Ta funkcja zamienia "Suzuki Grand Vitara!" na "suzuki-grand-vitara"
@@ -512,19 +511,18 @@ window.pokazSzczegoly = async (id) => {
 
                 window.aktualneFotki = Array.isArray(o.zdjecia) ? o.zdjecia : [o.zdjecia];
     // Naprawione: Zamieniamy numer na tekst przed formatowaniem, żeby uniknąć błędu
-        const telCzysty = o.telefon ? String(o.telefon) : '';
-    const czyPodano = (telCzysty && telCzysty !== 'brak' && telCzysty !== '');
-    const telFormat = czyPodano ? telCzysty.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : 'Nie podano';
+            const telCzysty = (o.telefon && o.telefon !== 'brak') ? String(o.telefon) : '';
+    const telFormat = telCzysty ? telCzysty.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '';
     
     let telefonWidok = "";
-    if (!czyPodano) {
+    if (!telCzysty) {
         telefonWidok = `<b style="margin-left:8px; color:gray;">Nie podano</b>`;
     } else {
         telefonWidok = user ? `
-            <button onclick="this.outerHTML='<a href=\'tel:${telCzysty}\' style=\'text-decoration:none; color:inherit; font-weight:800; font-size:16px;\'>${telFormat}</a>'" 
+            <button onclick="this.outerHTML='<b style=\'font-size:16px; margin-left:8px; font-weight:800;\'>${telFormat}</b>'" 
                     style="background:var(--primary); color:white; border:none; padding:4px 15px; border-radius:8px; font-weight:800; cursor:pointer; font-size:12px; margin-left:8px; vertical-align:middle;">
                 Pokaż
-            </button>` : `<span style="color:red; font-size:11px; margin-left:8px;">[Zaloguj się, aby zobaczyć]</span>`;
+            </button>` : `<span style="color:red; font-size:11px; margin-left:8px;">[Zaloguj się]</span>`;
     }
     
     const przyciskChatu = (user && user.email !== o.user_email) 
