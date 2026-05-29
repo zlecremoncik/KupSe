@@ -1198,8 +1198,16 @@ function renderTop12(lista) {
     const k = document.getElementById('lista');
     if (!k) return;
     
-    // Bierzemy po prostu 12 najnowszych bez względu na datę
-    const top12 = lista.slice(0, 12);
+    const teraz = new Date();
+    const limit = 1000 * 60 * 60 * 24 * 30; // 30 dni
+
+    // FILTR: Bierzemy tylko te, które mają mniej niż 30 dni
+    const aktywne = lista.filter(o => {
+        const dataOgl = new Date(o.created_at);
+        return (teraz - dataOgl) < limit;
+    });
+
+    const top12 = aktywne.slice(0, 12);
     
     k.style.display = 'grid';
     k.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
