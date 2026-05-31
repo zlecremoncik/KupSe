@@ -40,6 +40,13 @@ const bezpiecznyTekst = (t) => {
 window.renderujOgloszenia = (lista) => {
     const k = document.getElementById('lista');
     if (!k) return;
+    
+    // FILTR: Pokazuj tylko ogłoszenia młodsze niż 30 dni
+    const teraz = new Date();
+    const limit = 1000 * 60 * 60 * 24 * 30; 
+    const aktywne = lista.filter(o => (teraz - new Date(o.created_at)) < limit);
+
+    k.style.display = 'grid';
     k.style.display = 'grid';
     // Mapujemy listę, używając bezpiecznego renderowania
     k.innerHTML = lista.map(o => renderCardHTML(o)).join('');
@@ -1023,6 +1030,13 @@ window.filtrujPoPodkat = (kat, podkat) => {
 
 // --- PAGINACJA WYNIKÓW ---
 window.pokazWynikiModal = (tytul, wyniki, strona = 1) => {
+    // FILTR: Jeśli to nie jest widok "Moje Ogłoszenia", ukryj stare oferty
+    const teraz = new Date();
+    const limit = 1000 * 60 * 60 * 24 * 30;
+    if (!tytul.includes("Moje ogłoszenia")) {
+        wyniki = wyniki.filter(o => (teraz - new Date(o.created_at)) < limit);
+    }
+
     const OGLOSZENIA_NA_STRONE = 50; 
     if (!tytul.includes("(wyniki)")) { wynikiBazowe = [...wyniki]; ostatniTytul = tytul; }
     ostatnieWyniki = wyniki;
@@ -1197,6 +1211,13 @@ window.renderujOgloszenia = (lista) => {
 function renderTop12(lista) {
     const k = document.getElementById('lista');
     if (!k) return;
+    
+    // FILTR: Odsiewamy stare ogłoszenia przed wybraniem pierwszej dwunastki
+    const teraz = new Date();
+    const limit = 1000 * 60 * 60 * 24 * 30;
+    const tylkoAktywne = lista.filter(o => (teraz - new Date(o.created_at)) < limit);
+    
+    const top12 = tylkoAktywne.slice(0, 12);
     
     // Bierzemy po prostu 12 najnowszych bez względu na datę
     const top12 = lista.slice(0, 12);
