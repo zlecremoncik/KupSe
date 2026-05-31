@@ -922,10 +922,15 @@ window.pokazMojeOgloszenia = async (tab = 'aktywne') => {
         </div>
         <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap:15px;">
             ${wyswietlane.map(o => {
-                const dataStart = new Date(o.created_at);
+                                const dataStart = new Date(o.created_at);
                 const dataKoniec = new Date(dataStart.getTime() + limit);
                 const dniZostalo = Math.ceil((dataKoniec - teraz) / (1000 * 60 * 60 * 24));
-                const formatKoniec = isNaN(dataKoniec) ? "---" : `${String(dataKoniec.getDate()).padStart(2,'0')}.${String(dataKoniec.getMonth()+1).padStart(2,'0')}.${dataKoniec.getFullYear()}`;
+                
+                // Tutaj dodajemy wyciąganie godziny i minuty:
+                const godzina = String(dataKoniec.getHours()).padStart(2, '0');
+                const minuta = String(dataKoniec.getMinutes()).padStart(2, '0');
+                
+                const formatKoniec = isNaN(dataKoniec) ? "---" : `${String(dataKoniec.getDate()).padStart(2,'0')}.${String(dataKoniec.getMonth()+1).padStart(2,'0')}.${dataKoniec.getFullYear()} ${godzina}:${minuta}`;
                 
                 // Zabezpieczenie zdjęcia
                 const foto = (o.zdjecia && o.zdjecia.length > 0) ? o.zdjecia[0] : 'https://via.placeholder.com/300x200?text=Brak+zdjecia';
