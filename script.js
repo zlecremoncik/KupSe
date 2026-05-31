@@ -208,8 +208,6 @@ window.szukaj = async () => {
 window.loguj = async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('pass').value;
-
-    // Sprawdzamy tylko token, nie szukamy żadnych ramek iframe!
     const token = (window.turnstile) ? window.turnstile.getResponse() : "";
 
     if (!token || token === "") {
@@ -219,10 +217,10 @@ window.loguj = async () => {
     const { data, error } = await baza.auth.signInWithPassword({ 
         email, 
         password,
-        options: { captchaToken: token } // Wysyłamy ten dowód do systemu
+        options: { captchaToken: token } 
     });
 
-        if (error) {
+    if (error) {
         let komunikat = error.message;
         if (komunikat === "Invalid login credentials") {
             komunikat = "Nieprawidłowe hasło lub login";
@@ -232,6 +230,17 @@ window.loguj = async () => {
     } else {
         location.reload();
     }
+};
+
+// NOWA FUNKCJA DO LOGOWANIA PRZEZ GOOGLE I FB
+window.logujSpolecznosciowo = async (dostawca) => {
+    const { data, error } = await baza.auth.signInWithOAuth({
+        provider: dostawca,
+        options: {
+            redirectTo: window.location.origin
+        }
+    });
+    if (error) alert("Błąd logowania: " + error.message);
 };
 
 window.zarejestruj = async () => {
