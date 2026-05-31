@@ -47,9 +47,9 @@ window.renderujOgloszenia = (lista) => {
     const aktywne = lista.filter(o => (teraz - new Date(o.created_at)) < limit);
 
     k.style.display = 'grid';
-    k.style.display = 'grid';
+       k.style.display = 'grid';
     // Mapujemy listę, używając bezpiecznego renderowania
-    k.innerHTML = lista.map(o => renderCardHTML(o)).join('');
+    k.innerHTML = aktywne.map(o => renderCardHTML(o)).join('');
 };
 
 window.toggleSubcats = (kat) => {
@@ -1218,9 +1218,6 @@ function renderTop12(lista) {
     const tylkoAktywne = lista.filter(o => (teraz - new Date(o.created_at)) < limit);
     
     const top12 = tylkoAktywne.slice(0, 12);
-    
-    // Bierzemy po prostu 12 najnowszych bez względu na datę
-    const top12 = lista.slice(0, 12);
     
     k.style.display = 'grid';
     k.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
