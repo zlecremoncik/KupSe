@@ -1278,10 +1278,23 @@ async function sprawdzPowiadomieniaBezReloadu() {
 }
 async function init() {
     try {
-        // 1. Najpierw pobieramy ogłoszenia
+        // 1. Najpierw pobieramy ogłoszenia z bazy danych
         const { data, error } = await baza.from('ogloszenia').select('*').order('created_at', { ascending: false });
         if (error) throw error;
-        daneOgloszen = data || [];
+
+        // --- TUTAJ DODAJEMY FILTR DATY ---
+        // Sprawdzamy, czy ogłoszenie nie jest starsze niż 30 dni
+        const teraz = new Date();
+        const limit30Dni = 1000 * 60 * 60 * 24 * 30; // To są dokładnie 30 dni
+
+        daneOgloszen = (data || []).filter(o => {
+            const dataOgloszenia = new Date(o.created_at);
+            // Jeśli od wystawienia minęło MNIEJ niż 30 dni, to ogłoszenie zostaje na liście
+            return (teraz - dataOgloszenia) < limit30Dni;
+        });
+        // ---------------------------------
+
+        // Wyświetlamy tylko te przefiltrowane (aktywne) ogłoszenia
         renderTop12(daneOgloszen);
         
         // 2. TERAZ sprawdzamy logowanie (to musi być przed otwarciem ogłoszenia!)
