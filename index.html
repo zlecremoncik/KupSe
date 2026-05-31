@@ -379,7 +379,21 @@
 <div id="bot-login" style="margin-bottom: 15px; display: flex; justify-content: center;"></div>
 
 <button onclick="window.loguj()" style="width:100%; background:var(--primary); border:none; padding:14px; border-radius:12px; font-weight:800; cursor:pointer; color:white">Zaloguj</button>
-            <p style="font-size:13px">Brak konta? <a href="javascript:void(0)" onclick="window.pokazRejestracje()" style="color:var(--primary); font-weight:bold">Zarejestruj się</a></p>
+
+<div style="margin: 15px 0; display: flex; align-items: center; gap: 10px; color: #aaa; font-size: 12px;">
+    <div style="flex: 1; hieght: 1px; background: #eee; height: 1px;"></div> lub <div style="flex: 1; hieght: 1px; background: #eee; height: 1px;"></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px;">
+    <button onclick="window.logujSpolecznosciowo('google')" style="width:100%; background: white; border: 1px solid #ddd; padding: 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; font-size: 14px;">
+        <img src="https://www.google.com/favicon.ico" width="16" height="16"> Kontynuuj z Google
+    </button>
+    <button onclick="window.logujSpolecznosciowo('facebook')" style="width:100%; background: #1877F2; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; font-size: 14px;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" width="16" height="16"> Kontynuuj z Facebookiem
+    </button>
+</div>
+
+<p style="font-size:13px">Brak konta? <a href="javascript:void(0)" onclick="window.pokazRejestracje()" style="color:var(--primary); font-weight:bold">Zarejestruj się</a></p>
         </div>
         
        <div id="register-view" class="hidden" style="max-width:320px; margin: 20px auto; background:white; padding:30px; border-radius:25px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); text-align: center;">
