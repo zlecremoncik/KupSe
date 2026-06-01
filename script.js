@@ -237,7 +237,9 @@ window.logujSpolecznosciowo = async (dostawca) => {
     const { data, error } = await baza.auth.signInWithOAuth({
         provider: dostawca,
         options: {
-            redirectTo: window.location.origin
+            redirectTo: window.location.origin,
+            // Dodajemy jawne zapytanie o e-mail i profil publiczny
+            scopes: dostawca === 'facebook' ? 'email,public_profile' : 'email'
         }
     });
     if (error) alert("Błąd logowania: " + error.message);
