@@ -1188,16 +1188,17 @@ function renderCardHTML(o) {
         <div class="ad-card" onclick="window.pokazSzczegoly(${o.id})" style="background:white; border-radius:12px; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.1); cursor:pointer; position:relative;">
             <div onclick="event.stopPropagation(); window.toggleUlubione(event, ${o.id})" class="fav-btn-${o.id}" style="position:absolute; top:10px; right:10px; z-index:100; background:rgba(255,255,255,0.9); width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow: 0 2px 8px rgba(0,0,0,0.3); font-size: 20px;">
                 ${isFav ? '❤️' : '🤍'}
-            </div>
-                                    <img src="${o.zdjecia[0]}" alt="${o.tytul}" width="250" height="150" loading="lazy" style="width:100%; height:150px; object-fit:cover; aspect-ratio: 16/9;">
-            <div style="padding:12px;">
-                <b style="font-size:16px; color:var(--primary);">${o.cena} zł</b>
-                <div style="font-size:13px; margin-top:4px; height:34px; overflow:hidden; color:#333; font-weight:600;">${o.tytul}</div>
-                <div style="font-size:11px; color:gray; margin-top:8px; display:flex; justify-content:space-between; align-items: center;">
-                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50%;">📍 ${o.lokalizacja}</span>
+                        </div>
+            <img src="${o.zdjecia[0]}" alt="${o.tytul}" loading="lazy" style="width:100%; height:210px; object-fit:cover; display:block;">
+            <div style="padding:8px 12px 12px 12px;">
+                <b style="font-size:17px; color:var(--primary);">${o.cena} zł</b>
+                <div style="font-size:13px; margin-top:2px; height:34px; overflow:hidden; color:#333; font-weight:600; line-height:1.3;">${o.tytul}</div>
+                <div style="font-size:11px; color:gray; margin-top:6px; display:flex; justify-content:space-between; align-items: center;">
+                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 55%;">📍 ${o.lokalizacja}</span>
                     <span style="font-size:10px; opacity:0.8; text-align: right;">${pelnaData}</span>
                 </div>
             </div>
+        </div>
         </div>`;
 }
 
@@ -1372,6 +1373,24 @@ window.addEventListener('mousedown', (e) => {
         document.body.style.overflow = 'auto';
     }
 });
+
+window.ustawJakoGlowne = (index) => {
+    if (index === 0) return;
+    const fotka = window.tempZdjeciaEdycja.splice(index, 1)[0];
+    window.tempZdjeciaEdycja.unshift(fotka);
+    // Wywołujemy odświeżenie widoku w edycji - musisz mieć dostęp do funkcji odswiezZdjecia
+    // Najprościej: po prostu odświeżamy formularz edycji wywołując go ponownie lub przenosząc funkcję na zewnątrz.
+    const editBtn = document.querySelector('button[onclick*="window.usunFotoZEdycji"]');
+    if(editBtn) {
+        // To wymusi przerysowanie jeśli funkcja odswiezZdjecia jest w zasięgu
+        const fotoBox = document.getElementById('foto-container');
+        // Wywołaj funkcję odświeżającą, którą masz już w edytujOgloszenie:
+        const currentId = window.tempOgloszenieId; // musimy przypisać ID przy otwieraniu edycji
+        // Dla uproszczenia: dodaj "window.odswiezZdjeciaEdycja = odswiezZdjecia;" wewnątrz edytujOgloszenie
+    }
+    // Prowizoryczne odświeżenie:
+    document.querySelectorAll('#foto-container img')[0].click(); 
+};
 window.edytujOgloszenie = (id) => {
     const o = daneOgloszen.find(x => x.id === id);
     if (!o) return;
@@ -1399,10 +1418,12 @@ window.edytujOgloszenie = (id) => {
     const odswiezZdjecia = () => {
         let h = `<label style="display:block; margin-bottom:10px; font-weight:bold;">Zarządzaj zdjęciami (max 5):</label>`;
         h += `<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">`;
-        window.tempZdjeciaEdycja.forEach((url, i) => {
-            h += `<div style="position:relative; width:80px; height:80px; border:1px solid #ddd; border-radius:8px; overflow:hidden;">
-                    <img src="${url}" style="width:100%; height:100%; object-fit:cover;">
-                    <button type="button" onclick="window.usunFotoZEdycji(${i})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; cursor:pointer; padding:0 5px; font-weight:bold;">X</button>
+                window.tempZdjeciaEdycja.forEach((url, i) => {
+            const isMain = i === 0;
+            h += `<div style="position:relative; width:85px; height:85px; border:2px solid ${isMain ? 'var(--primary)' : '#ddd'}; border-radius:8px; overflow:hidden;">
+                    <img src="${url}" style="width:100%; height:100%; object-fit:cover; cursor:pointer;" onclick="window.ustawJakoGlowne(${i})">
+                    <button type="button" onclick="window.usunFotoZEdycji(${i})" style="position:absolute; top:0; right:0; background:rgba(255,0,0,0.8); color:white; border:none; cursor:pointer; width:20px; height:20px; font-weight:bold; font-size:12px; border-bottom-left-radius:5px;">✕</button>
+                    ${isMain ? '<div style="position:absolute; bottom:0; left:0; right:0; background:var(--primary); color:white; font-size:9px; text-align:center; font-weight:bold; padding:2px;">GŁÓWNE</div>' : ''}
                   </div>`;
         });
         h += `</div>`;
